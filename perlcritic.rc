@@ -1,0 +1,14 @@
+severity = 1
+exclude = RequireTidyCode RequirePodSections ProhibitPostfixControls RequireRcsKeywords RequireExplicitPackage
+include = Moose::ProhibitMultipleWiths Moose::ProhibitNewMethod Moose::RequireCleanNamespace Moose::RequireMakeImmutable
+color = 1
+verbose = 9
+
+[BuiltinFunctions::ProhibitStringyEval]
+allow_includes = 1
+
+[CodeLayout::ProhibitTrailingWhitespace]
+
+[Documentation::PodSpelling]
+stop_words = metadata KiokuDB KENTNL KENTNL's CPAN blogged CPANized PluginBundles CPANID's CPANID dists DPCHRIST everyones irc cpan Doherty's Gorwits namespace Gorwit's blog PluginBundle
+
