@@ -1,288 +1,405 @@
 use strict;
 use warnings;
+use feature 'switch';
+use utf8;
 
-package Dist::Zilla::PluginBundle::Author::KENTNL;
-
-# ABSTRACT: BeLike::KENTNL when you build your distributions.
+package Dist::Zilla::PluginBundle::RTHOMPSON;
+# ABSTRACT: RTHOMPSON's Dist::Zilla Configuration
 
 use Moose;
-use Moose::Autobox;
-use Class::Load qw( :all );
+use MooseX::Has::Sugar;
+use Carp;
+with 'Dist::Zilla::Role::PluginBundle::Easy';
 
-with 'Dist::Zilla::Role::PluginBundle';
+sub mvp_multivalue_args { qw( -remove copy_file move_file allow_dirty ) }
 
-use namespace::autoclean -also => [qw( _expand _defined_or _only_git _only_cpan _release_fail )];
+# Returns true for strings of 'true', 'yes', or positive numbers,
+# false otherwise.
+sub _parse_bool {
+    $_ ||= '';
+    return 1 if $_[0] =~ m{^(true|yes|1)$}xsmi;
+    return if $_[0] =~ m{^(false|no|0)$}xsmi;
+    die "Invalid boolean value $_[0]. Valid values are true/yes/1 or false/no/0";
+}
+
+sub configure {
+    my $self = shift;
+
+    my $defaults = {
+        # AutoVersion by default
+        version => 'auto',
+        # Assume that the module is experimental unless told
+        # otherwise.
+        version_major => 0,
+        # Assume that synopsis is perl code and should compile
+        # cleanly.
+        synopsis_is_perl_code => 1,
+        # Realease to CPAN for real
+        release => 'real',
+        # Archive releases
+        archive => 1,
+        archive_directory => 'releases',
+        # Copy README.pod from build dir to dist dir, for Github and
+        # suchlike.
+        copy_file => [],
+        move_file => [],
+        # version control system = git
+        vcs => 'git',
+        allow_dirty => [ 'dist.ini', 'README.pod', 'Changes' ],
+    };
+    my %args = (%$defaults, %{$self->payload});
+
+    # Use the @Filter bundle to handle '-remove'.
+    if ($args{-remove}) {
+        $self->add_bundle('@Filter' => { %args, -bundle => '@RTHOMPSON' });
+        return;
+    }
+
+    # Add appropriate version plugin
+    if (lc($args{version}) eq 'auto') {
+        $self->add_plugins(
+            [ 'AutoVersion' => { major => $args{version_major} } ]
+        );
+    }
+    elsif (lc($args{version}) eq 'disable') {
+        # No-op
+        $self->add_plugins(
+            [ 'StaticVersion' => { version => '' } ]
+        );
+    }
+    else {
+        # If version is empty, this is a no-op.
+        $self->add_plugins(
+            [ 'StaticVersion' => { version => $args{version} } ]
+        );
+    }
+
+    # Copy files from build dir
+    $self->add_plugins(
+        [ 'CopyFilesFromBuild' => {
+            copy => ($args{copy_file} || [ '' ]),
+            move => ($args{move_file} || [ '' ])
+        } ]
+    );
+
+    # Decide whether to test SYNOPSIS for syntax.
+    if (_parse_bool($args{synopsis_is_perl_code})) {
+        $self->add_plugins('SynopsisTests');
+    }
+
+    # Choose release plugin
+    given ($args{release}) {
+        when (lc eq 'real') {
+            $self->add_plugins('UploadToCPAN')
+        }
+        when (lc eq 'fake') {
+            $self->add_plugins('FakeRelease')
+        }
+        when (lc eq 'none') {
+            # No release plugin
+        }
+        when ($_) {
+            $self->add_plugins("$_")
+        }
+        default {
+            # Empty string is the same as 'none'
+        }
+    }
+
+    # Choose whether and where to archive releases
+    if (_parse_bool($args{archive})) {
+        $self->add_plugins(
+            ['ArchiveRelease' => {
+                directory => $args{archive_directory},
+            } ]
+        );
+    }
+
+    # All the invariant plugins
+    $self->add_plugins(
+        # @Basic
+        'GatherDir',
+        'PruneCruft',
+        'ManifestSkip',
+        'MetaYAML',
+        'License',
+        'ExecDir',
+        'ShareDir',
+        'MakeMaker',
+        'Manifest',
+
+        # Mods
+        'PkgVersion',
+        # TODO: Only add PodWeaver if weaver.ini exists
+        'PodWeaver',
+
+        # Generated Docs
+        'InstallGuide',
+        ['ReadmeAnyFromPod', 'text.build', {
+            filename => 'README',
+            type => 'text',
+        }],
+        # This one gets copied out of the build dir by default, and
+        # does not become part of the dist.
+        ['ReadmeAnyFromPod', 'pod.root', {
+            filename => 'README.pod',
+            type => 'pod',
+            location => 'root',
+        }],
+
+        # Tests
+        'CriticTests',
+        'PodTests',
+        'HasVersionTests',
+        'PortabilityTests',
+        'UnusedVarsTests',
+        ['CompileTests' => {
+            # The test files don't seem to compile in the context of
+            # this test. But it's ok, because if they really have
+            # problems, they'll fail to compile when they run.
+            skip => 'Test$',
+        }],
+        'KwaliteeTests',
+        'ExtraTests',
+
+        # Prerequisite checks
+        'ReportVersions',
+        'MinimumPerl',
+        'AutoPrereqs',
+
+        # Release checks
+        'CheckChangesHasContent',
+        'CheckPrereqsIndexed',
+
+        # Release
+        'NextRelease',
+        'TestRelease',
+        'ConfirmRelease',
+    );
+
+    # Choose version control. This must be after 'NextRelease' so that
+    # the Changes file is updated before committing.
+    given (lc $args{vcs}) {
+        when ('none') {
+            # No-op
+        }
+        when ('git') {
+            $self->add_plugins(
+                ['Git::Check' => {
+                    allow_dirty => [ 'dist.ini', 'README.pod', 'Changes' ],
+                } ],
+                [ 'Git::Commit' => {
+                    allow_dirty => [ 'dist.ini', 'README.pod', 'Changes' ],
+                } ],
+                'Git::Tag',
+                # This can't hurt. It's a no-op if github is not involved.
+                'GithubMeta',
+            );
+        }
+        default {
+            croak "Unknown vcs: $_\nTry setting vcs = 'none' and setting it up yourself.";
+        }
+    }
+}
+
+1; # Magic true value required at end of module
+__END__
 
 =head1 SYNOPSIS
 
-    [@Author::KENTNL]
-    no_cpan = 1 ; skip upload to cpan and twitter.
-    no_git  = 1 ; skip things that work with git.
-    twitter_only = 1 ; skip uploading to cpan, don't git, but twitter with fakerelease.
-    release_fail = 1 ; asplode!. ( non-twitter only )
-    git_versions = 1 ;  use git::nextversion for versioning
+In dist.ini:
+
+[@RTHOMPSON]
 
 =head1 DESCRIPTION
 
-This is the plug-in bundle that KENTNL uses. It exists mostly because he is very lazy
-and wants others to be using what he's using if they want to be doing work on his modules.
+This plugin bundle, in its default configuration, is equivalent to:
 
-=cut
+[AutoVersion]
+major = 0
+[GatherDir]
+[PruneCruft]
+[ManifestSkip]
+[MetaYAML]
+[License]
+[ExecDir]
+[ShareDir]
+[MakeMaker]
+[Manifest]
+[PkgVersion]
+[PodWeaver]
+[InstallGuide]
+[ReadmeAnyFromPod / text.build ]
+filename = README
+type = text
+[ReadmeAnyFromPod / pod.root ]
+filename = README.pod
+type = pod
+location = root
+[CriticTests]
+[PodTests]
+[HasVersionTests]
+[PortabilityTests]
+[UnusedVarsTests]
+[CompileTests]
+skip = Test$
+[KwaliteeTests]
+[ExtraTests]
+[ReportVersions]
+[MinimumPerl]
+[AutoPrereqs]
+[CheckChangesHasContent]
+[NextRelease]
+[TestRelease]
+[ConfirmRelease]
+[UploadToCPAN]
+[ArchiveRelease]
+directory = releases
+[Git::Check]
+allow_dirty = dist.ini
+allow_dirty = README.pod
+allow_dirty = Changes
+[Git::Commit]
+allow_dirty = dist.ini
+allow_dirty = README.pod
+allow_dirty = Changes
+[Git::Tag]
+[GithubMeta]
 
-=head1 NAMING SCHEME
+There are several options that can change the default configuation,
+though.
 
-As I blogged about on L<< C<blog.fox.geek.nz> : Making a Minting Profile as a CPANized Dist |http://bit.ly/hAwl4S >>,
-this bundle advocates a new naming system for people who are absolutely convinced they want their Author-Centric distribution uploaded to CPAN.
+=option -remove
 
-As we have seen with Dist::Zilla there have been a slew of PluginBundles with CPANID's in their name, to the point that there is a copious amount of name-space pollution
-in the PluginBundle name-space, and more Author bundles than task-bundles, which was really what the name-space was designed for, and I'm petitioning you to help reduce
-this annoyance in future modules.
+This option can be used to remove specific plugins from the bundle. It
+can be used multiple times.
 
-From a CPAN testers perspective, the annoyance of lots of CPANID-dists is similar to the annoyance of the whole DPCHRIST:: subspace, and that if this pattern continues,
-it will mean for the testers who do not wish to test everyones personal modules, that they will have to work hard to avoid this. If DPCHRIST:: had used something like
-Author::DPCHRIST:: instead, I doubt so many people would be horrified by it, because you can just have a policy/rule that excludes ^Author::, and everyone else who goes
-that way can be quietly ignored.
+Obviously, the default is not to remove any plugins.
 
-Then we could probably rationally add that same restriction to the irc announce bots, the "recent modules" list and so-forth, and possibly even apply special indexing restrictions
-or something so people wouldn't even have to know those modules exist on cpan!
+Example:
 
-So, for the sake of cleanliness, semantics, and general global sanity, I ask you to join me with my Author:: naming policy to voluntarily segregate modules that are most
-likely of only personal use from those that have more general application.
+; Remove these two plugins from the bundle
+-remove = CriticTests
+-remove = GithubMeta
 
-    Dist::Zilla::Plugin::Foo                    # [Foo]                 dist-zilla plugins for general use
-    Dist::Zilla::Plugin::Author::KENTNL::Foo    # [Author::KENTNL::Foo] foo that only KENTNL will probably have use for
-    Dist::Zilla::PluginBundle::Classic          # [@Classic]            A bundle that can have practical use by many
-    Dist::Zilla::PluginBundle::Author::KENTNL   # [@Author::KENTNL]     KENTNL's primary plugin bundle
-    Dist::Zilla::MintingProfile::Default        # A minting profile that is used by all
-    Dist::Zilla::MintingProfile::Author::KENTNL # A minting profile that only KENTNL will find of use.
+=option version, version_major
 
-=head2 Current Proponents
+This option is used to specify the version of the module. The default
+is 'auto', which uses the AutoVersion plugin to choose a version
+number. You can also set the version number manually, or choose
+'disable' to prevent this bundle from supplying a version.
 
-I wish to give proper respect to the people out there already implementing this scheme:
+Examples:
 
-=over 4
+; Use AutoVersion (default)
+version = auto
+version_major = 0
+; Use manual versioning
+version = 1.14.04
+; Provide no version, so that another plugin can handle it.
+version = disable
 
-=item L<< C<@Author::DOHERTY> |Dist::Zilla::PluginBundle::Author::DOHERTY >> - Mike Doherty's, Author Bundle.
+=option copy_file, move_file
 
-=item L<< C<@Author::OLIVER> |Dist::Zilla::PluginBundle::Author::OLIVER >> - Oliver Gorwits', Author Bundle.
+If you want to copy or move files out of the build dir and into the
+distribution dir, use these two options to specify those files. Both
+of these options can be specified multiple times.
 
-=item L<< C<Dist::Zilla::PluginBundle::Author::> namespace |http://bit.ly/dIovQI >> - Oliver Gorwit's blog on the subject.
+The most common reason to use this would be to put automatically
+generated files under version control. For example, Github likes to
+see a README file in your distribution, but if your README file is
+auto-generated during the build, you need to copy each newly-generated
+README file out of its build directory in order for Github to see it.
 
-=back
+If you want to include an auto-generated file in your distribution but
+you I<don't> want to include it in the build, use C<move_file> instead
+of C<copy_file>.
 
-=cut
+The default is to move F<README.pod> out of the build dir. If you use
+C<move_file> in your configuration, this default will be disabled, so
+if you want it, make sure to include it along with your other
+C<move_file>s.
 
-=head1 ENVIRONMENT
+Example:
 
-all of these have to merely exist to constitute a "true" status.
+copy_file = README
+move_file = README.pod
+copy_file = README.txt
 
-=head2 KENTNL_NOGIT
+=option synopsis_is_perl_code
 
-the same as no_git=1
+If this is set to true (the default), then the SynopsisTests plugin
+will be enabled. This plugin checks the perl syntax of the SYNOPSIS
+sections of your modules. Obviously, if your SYNOPSIS section is not
+perl code (case in point: this module), you should set this to false.
 
-=head2 KENTNL_NOCPAN
+Example:
 
-same as no_cpan = 1
+synopsis_is_perl_code = false
 
-=head2 KENTNL_TWITTER_ONLY
+=option release
 
-same as twitter_only=1
+This option chooses the type of release to do. The default is 'real,'
+which means "really upload the release to CPAN" (i.e. load the
+C<UploadToCPAN> plugin). You can set it to 'fake,' in which case the
+C<FakeRelease> plugin will be loaded, which simulates the release
+process without actually doing anything. You can also set it to 'none'
+if you do not want this module to load any release plugin, in which
+case your F<dist.ini> file should load a release plugin directly. Any
+other value for this option will be interpreted as a release plugin
+name to be loaded.
 
-=head2 KENTNL_RELEASE_FAIL
+Examples:
 
-same as release_fail=1
+; Release to CPAN for real (default)
+release = real
+; For testing, you can do fake releases
+release = fake
+; Or you can choose no release plugin
+release = none
+; Or you can specify a specific release plugin.
+release = OtherReleasePlugin
 
-=cut
+=option archive, archive_directory
 
-sub _expand {
-  my ( $class, $suffix, $conf ) = @_;
-  ## no critic ( RequireInterpolationOfMetachars )
-  if ( ref $suffix ) {
-    my ( $corename, $rename ) = @{$suffix};
-    if ( exists $conf->{-name} ) {
-      $rename = delete $conf->{-name};
-    }
-    return [ q{@Author::KENTNL/} . $corename . q{/} . $rename, 'Dist::Zilla::Plugin::' . $corename, $conf ];
-  }
-  if ( exists $conf->{-name} ) {
-    my $rename;
-    $rename = sprintf q{%s/%s}, $suffix, ( delete $conf->{-name} );
-    return [ q{@Author::KENTNL/} . $rename, 'Dist::Zilla::Plugin::' . $suffix, $conf ];
+If set to true, the C<archive> option copies each released version of
+the module to an archive directory, using the C<ArchiveRelease>
+plugin. This is the default. The name of the archive directory is
+specified using C<archive_directory>, which is F<releases> by default.
 
-  }
-  return [ q{@Author::KENTNL/} . $suffix, 'Dist::Zilla::Plugin::' . $suffix, $conf ];
-}
+Examples:
 
-=method bundle_config
+; archive each release to the "releases" directory
+archive = true
+archive_directory = releases
+; Or don't archive
+archive = false
 
-See L<< the C<PluginBundle> role|Dist::Zilla::Role::PluginBundle >> for what this is for, it is a method to satisfy that role.
+=option vcs
 
-=cut
+This option specifies which version control system is being used for
+the distribution. Integration for that version control system is
+enabled. The default is 'git', and currently the only other option is
+'none', which does not load any version control plugins.
 
-sub _defined_or {
+=option allow_dirty
 
-  # Backcompat way of doing // in < 5.10
-  my ( $hash, $field, $default, $nowarn ) = @_;
-  $nowarn = 0 if not defined $nowarn;
-  if ( not( defined $hash && ref $hash eq 'HASH' && exists $hash->{$field} && defined $hash->{$field} ) ) {
-    require Carp;
-    ## no critic (RequireInterpolationOfMetachars)
-    Carp::carp( '[@Author::KENTNL]' . " Warning: autofilling $field with $default " ) unless $nowarn;
-    return $default;
-  }
-  return $hash->{$field};
-}
+This corresponds to the option of the same name in the Git::Check and
+Git::Commit plugins. Briefly, files listed in C<allow_dirty> are
+allowed to have changes that are not yet committed to git, and during
+the release process, they will be checked in (committed).
 
-sub _mk_only {
-  my ( $subname, $envname, $argfield ) = @_;
-  my $sub = sub {
-    my ( $args, @rest ) = @_;
-    return () if exists $ENV{ 'KENTNL_NO' . $envname };
-    return @rest unless defined $args;
-    return @rest unless ref $args eq 'HASH';
-    return @rest unless exists $args->{ 'no' . $argfield };
-    return ();
-  };
-  {
-    ## no critic (ProhibitNoStrict)
-    no strict 'refs';
-    *{ __PACKAGE__ . '::_only_' . $subname } = $sub;
-  }
-  return 1;
-}
+The default is F<dist.ini>, F<Changes>, and F<README.pod>. If you
+override the default, you must include these files manually if you
+want them.
 
-BEGIN {
-  _mk_only(qw( git GIT git ));
-  _mk_only(qw( cpan CPAN cpan ));
-  _mk_only(qw( twitter TWITTER twitter ));
-}
+This option only has an effect if C<vcs> is 'git'.
 
-sub _release_fail {
-  my ( $args, $ref ) = ( shift, [ 'FakeRelease' => {} ] );
-  ## no critic (RequireLocalizedPunctuationVars)
+=for Pod::Coverage configure mvp_multivalue_args
 
-  if ( exists $ENV{KENTNL_RELEASE_FAIL} ) {
-    $ENV{DZIL_FAKERELEASE_FAIL} = 1;
-    return $ref;
-  }
-  return () unless defined $args;
-  return () unless ref $args eq 'HASH';
-  return () unless exists( $args->{release_fail} );
-  $ENV{DZIL_FAKERELEASE_FAIL} = 1;
-  return $ref;
-}
+=head1 BUGS AND LIMITATIONS
 
-sub _if_twitter {
-  my ( $args, $twitter, $else ) = @_;
-  return @{$twitter} if ( exists $ENV{KENTNL_TWITTER_ONLY} );
-  return @{$twitter} if ( exists $args->{twitter_only} );
-  return @{$else};
-}
+This module should be more configurable. Suggestions welcome.
 
-sub _if_git_versions {
-  my ( $args, $gitversions, $else ) = @_;
-  return @{$gitversions} if exists $ENV{KENTNL_GITVERSIONS};
-  return @{$gitversions} if exists $args->{git_versions};
-  return @{$else};
-}
-
-sub bundle_config {
-  my ( $self, $section ) = @_;
-  my $class = ( ref $self ) || $self;
-
-  my $arg          = $section->{payload};
-  my $twitter_conf = { hash_tags => _defined_or( $arg, twitter_hash_tags => '#perl #cpan' ) };
-  my $extra_hash   = _defined_or( $arg, twitter_extra_hash_tags => q{}, 1 );
-  $twitter_conf->{hash_tags} .= q{ } . $extra_hash if $extra_hash;
-
-  my @config = map { _expand( $class, $_->[0], $_->[1] ) } (
-    [
-      _if_git_versions(
-        $arg,
-        [ 'Git::NextVersion' => { version_regexp => '^(.*)-source$', first_version => '0.1.0' } ],
-        [
-          'AutoVersion::Relative' => {
-            major     => _defined_or( $arg, version_major         => 0 ),
-            minor     => _defined_or( $arg, version_minor         => 1 ),
-            year      => _defined_or( $arg, version_rel_year      => 2010 ),
-            month     => _defined_or( $arg, version_rel_month     => 5 ),
-            day       => _defined_or( $arg, version_rel_day       => 16 ),
-            hour      => _defined_or( $arg, version_rel_hour      => 20 ),
-            time_zone => _defined_or( $arg, version_rel_time_zone => 'Pacific/Auckland' ),
-          }
-        ]
-      )
-    ],
-    [ 'GatherDir'  => { include_dotfiles => 1 } ],
-    [ 'MetaConfig' => {} ],
-    [ 'PruneCruft' => { except => '^.perltidyrc' } ],
-    _only_git( $arg, [ 'GithubMeta' => {} ] ),
-    [ 'License'               => {} ],
-    [ 'PkgVersion'            => {} ],
-    [ 'PodWeaver'             => {} ],
-    [ 'MetaProvides::Package' => {} ],
-    [ 'MetaJSON'              => {} ],
-    [ 'MetaYAML'              => {} ],
-    [ 'ModuleBuild'           => {} ],
-    [ 'ReadmeFromPod'         => {} ],
-    [ 'ManifestSkip'          => {} ],
-    [ 'Manifest'              => {} ],
-    [ 'AutoPrereqs'           => {} ],
-    [
-      'Prereqs' =>
-        { -name => 'BundleDevelNeeds', -phase => 'develop', -type => 'requires', 'Dist::Zilla::PluginBundle::Author::KENTNL::Lite' => 0 }
-    ],
-    [
-      'Prereqs' => {
-        -name                                     => 'BundleDevelRecommends',
-        -phase                                    => 'develop',
-        -type                                     => 'recommends',
-        'Dist::Zilla::PluginBundle::Author::KENTNL::Lite' => 0.01009803
-      }
-    ],
-    [
-      'Prereqs' => {
-        -name                               => 'BundleDevelSuggests',
-        -phase                              => 'develop',
-        -type                               => 'suggests',
-        'Dist::Zilla::PluginBundle::Author::KENTNL' => '1.0.0',
-      }
-    ],
-
-    [ 'MetaData::BuiltWith'  => { show_uname => 1, uname_args => q{ -s -o -r -m -i } } ],
-    [ 'CompileTests'         => {} ],
-    [ 'CriticTests'          => {} ],
-    [ 'MetaTests'            => {} ],
-    [ 'PodCoverageTests'     => {} ],
-    [ 'PodSyntaxTests'       => {} ],
-    [ 'ReportVersions::Tiny' => {} ],
-    [ 'KwaliteeTests'        => {} ],
-    [ 'EOLTests'       => { trailing_whitespace => 1, } ],
-    [ 'ExtraTests'     => {} ],
-    [ 'TestRelease'    => {} ],
-    [ 'ConfirmRelease' => {} ],
-    _if_twitter(
-      $arg,
-      [ [ 'FakeRelease' => { user => 'KENTNL' }, ], [ 'Twitter' => $twitter_conf, ], ],
-      [
-        _release_fail($arg),
-        _only_git( $arg, [ 'Git::Check' => { filename => 'Changes' } ] ),
-        [ 'NextRelease' => {} ],
-        _only_git( $arg, [ [ 'Git::Tag', 'tag_master' ] => { tag_format => '%v-source' } ] ),
-        _only_git( $arg, [ 'Git::Commit' => {} ] ),
-        _only_git( $arg, [ 'Git::CommitBuild' => { release_branch => 'releases' } ] ),
-        _only_git( $arg, [ [ 'Git::Tag', 'tag_release' ] => { branch => 'releases', tag_format => '%v' } ] ),
-        _only_cpan( $arg, [ 'UploadToCPAN' => {} ] ),
-        _only_cpan( $arg, _only_twitter( $arg, [ 'Twitter' => $twitter_conf ] ) ),
-      ]
-    )
-  );
-  load_class( $_->[1] ) for @config;
-  return @config;
-}
-__PACKAGE__->meta->make_immutable;
-no Moose;
-
-## no critic (RequireEndWithOne)
-'I go to prepare a perl module for you, if it were not so, I would have told you';
-
+Please report any bugs or feature requests to
+C<rct+perlbug@thompsonclan.org>.
