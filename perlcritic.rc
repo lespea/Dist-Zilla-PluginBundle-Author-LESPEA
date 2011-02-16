@@ -1,5 +1,5 @@
 severity = 1
-include = Moose::ProhibitMultipleWiths Moose::ProhibitNewMethod Moose::RequireCleanNamespace Moose::RequireMakeImmutable Lax::ProhibitComplexMappings::LinesNotStatements Lax::ProhibitEmptyQuotes::ExceptAsFallback Lax::ProhibitLeadingZeros::ExceptChmod Lax::ProhibitStringyEval::ExceptForRequire Lax::RequireEndWithTrueConst Lax::RequireExplicitPackage::ExceptForPragmata Bangs::ProhibitNumberedNames Bangs::ProhibitRefProtoOrProto Bangs::ProhibitUselessRegexModifier Subroutines::ProhibitExportingUndeclaredSubs Subroutines::ProhibitQualifiedSubDeclarations Modules::RequireExplicitInclusion Documentation::RequirePODUseEncodingUTF8 CodeLayout::RequireUseUTF8
+include = Moose::ProhibitMultipleWiths Moose::ProhibitNewMethod Moose::RequireCleanNamespace Moose::RequireMakeImmutable Lax::ProhibitComplexMappings::LinesNotStatements Lax::ProhibitEmptyQuotes::ExceptAsFallback Lax::ProhibitLeadingZeros::ExceptChmod Lax::ProhibitStringyEval::ExceptForRequire Lax::RequireEndWithTrueConst Lax::RequireExplicitPackage::ExceptForPragmata Bangs::ProhibitNumberedNames Bangs::ProhibitRefProtoOrProto Bangs::ProhibitUselessRegexModifier Subroutines::ProhibitQualifiedSubDeclarations Documentation::RequirePODUseEncodingUTF8 CodeLayout::RequireUseUTF8
 color = 1
 verbose = 9
 
@@ -29,6 +29,8 @@ allow_subscripts = 1
 [-Documentation::RequirePodSections]
 [-ErrorHandling::RequireCarping]
 [-Miscellanea::RequireRcsKeywords]
+[-Modules::RequireExplicitInclusion]
 [-Modules::RequireExplicitPackage]
 [-References::ProhibitDoubleSigils]
+[-Subroutines::ProhibitCallsToUndeclaredSubs]
 
