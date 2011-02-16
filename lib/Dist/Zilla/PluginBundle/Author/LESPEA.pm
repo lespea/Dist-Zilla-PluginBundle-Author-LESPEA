@@ -1,90 +1,124 @@
 use strict;
 use warnings;
-use feature 'switch';
+
 use utf8;
 
-package Dist::Zilla::PluginBundle::RTHOMPSON;
-# ABSTRACT: RTHOMPSON's Dist::Zilla Configuration
+package Dist::Zilla::PluginBundle::Author::LESPEA;
+
+# ABSTRACT: LESPEA's Dist::Zilla Configuration
+
+use feature 'switch';
 
 use Moose;
-use MooseX::Has::Sugar;
 use Carp;
 with 'Dist::Zilla::Role::PluginBundle::Easy';
 
-sub mvp_multivalue_args { qw( -remove copy_file move_file allow_dirty ) }
 
-# Returns true for strings of 'true', 'yes', or positive numbers,
-# false otherwise.
+=encoding utf8
+
+=head1 SYNOPSIS
+
+    #  In dist.ini:
+    [@Author::LESPEA]
+
+
+=head1 DESCRIPTION
+
+This plugin bundle, in its default configuration, is equivalent to:
+
+    [ArchiveRelease]
+    [Authority]
+    [AutoMetaResources]
+    [AutoPrereqs]
+    [CPANChangesTests]
+    [CheckChangesTests]
+    [CompileTests]
+    [ConfirmRelease]
+    [ConsistentVersionTest]
+    [CopyFilesFromBuild]
+    [CriticTests]
+    [DistManifestTests]
+    [DualBuilders]
+    [EOLTests]
+    [ExecDir]
+    [ExtraTests]
+    [FakeRelease]
+    [GatherDir]
+    [HasVersionTests]
+    [InstallGuide]
+    [KwaliteeTests]
+    [License]
+    [MakeMaker]
+    [Manifest]
+    [ManifestSkip]
+    [MetaConfig]
+    [MetaJSON]
+    [MetaNoIndex]
+    [MetaTests]
+    [MetaYAML]
+    [MinimumPerl]
+    [MinimumVersionTests]
+    [ModuleBuild]
+    [NextRelease]
+    [NoTabsTests]
+    [PerlTidy]
+    [PkgVersion]
+    [PodCoverageTests]
+    [PodSyntaxTests]
+    [PodWeaver]
+    [PortabilityTests]
+    [PruneCruft]
+    [ReportVersions::Tiny]
+    [ShareDir]
+    [Signature]
+    [SynopsisTests]
+    [TestRelease]
+    [UnusedVarsTests]
+    [UploadToCPAN]
+
+=cut
+
+
+
+#  Declare which options can be specified multiple times
+sub mvp_multivalue_args { return qw( -remove copy_file move_file ) }
+
+
+
+#  Returns true for strings of 'true', 'yes', or positive numbers;
+#  false for for 'false', 'no', or 0; and dies otherwise
 sub _parse_bool {
-    $_ ||= '';
-    return 1 if $_[0] =~ m{^(true|yes|1)$}xsmi;
-    return if $_[0] =~ m{^(false|no|0)$}xsmi;
-    die "Invalid boolean value $_[0]. Valid values are true/yes/1 or false/no/0";
+    my $val = shift // q{};
+
+    return 1 if $val =~ m{^(?:true|yes|1)$}xsmi;
+    return   if $val =~ m{^(?:false|no|0)$}xsmi;
+
+    die "Invalid boolean value $val. Valid values are true/yes/1 or false/no/0";
 }
 
-sub configure {
-    my $self = shift;
 
-    my $defaults = {
-        # AutoVersion by default
-        version => 'auto',
-        # Assume that the module is experimental unless told
-        # otherwise.
-        version_major => 0,
-        # Assume that synopsis is perl code and should compile
-        # cleanly.
-        synopsis_is_perl_code => 1,
-        # Realease to CPAN for real
-        release => 'real',
-        # Archive releases
-        archive => 1,
-        archive_directory => 'releases',
-        # Copy README.pod from build dir to dist dir, for Github and
-        # suchlike.
-        copy_file => [],
-        move_file => [],
-        # version control system = git
-        vcs => 'git',
-        allow_dirty => [ 'dist.ini', 'README.pod', 'Changes' ],
-    };
-    my %args = (%$defaults, %{$self->payload});
+
+#  Add the "variable" plugins
+sub _add_variable {
+    my ($self, %args) = @_;
 
     # Use the @Filter bundle to handle '-remove'.
-    if ($args{-remove}) {
-        $self->add_bundle('@Filter' => { %args, -bundle => '@RTHOMPSON' });
+    if ($args{'-remove'}) {
+        $self->add_bundle('@Filter' => { %args, -bundle => '@Author::LESPEA' });  ## no critic 'RequireInterpolationOfMetachars'
         return;
-    }
-
-    # Add appropriate version plugin
-    if (lc($args{version}) eq 'auto') {
-        $self->add_plugins(
-            [ 'AutoVersion' => { major => $args{version_major} } ]
-        );
-    }
-    elsif (lc($args{version}) eq 'disable') {
-        # No-op
-        $self->add_plugins(
-            [ 'StaticVersion' => { version => '' } ]
-        );
-    }
-    else {
-        # If version is empty, this is a no-op.
-        $self->add_plugins(
-            [ 'StaticVersion' => { version => $args{version} } ]
-        );
     }
 
     # Copy files from build dir
     $self->add_plugins(
         [ 'CopyFilesFromBuild' => {
-            copy => ($args{copy_file} || [ '' ]),
-            move => ($args{move_file} || [ '' ])
+            copy => ($args{copy_file} || [ q{} ]),
+            move => ($args{move_file} || [ q{} ]),
         } ]
     );
 
     # Decide whether to test SYNOPSIS for syntax.
-    if (_parse_bool($args{synopsis_is_perl_code})) {
-        $self->add_plugins('SynopsisTests');
+    if (_parse_bool($args{tidy})) {
+        $self->add_plugins('PerlTidy');
     }
 
     # Choose release plugin
@@ -111,163 +145,228 @@ sub configure {
         $self->add_plugins(
             ['ArchiveRelease' => {
                 directory => $args{archive_directory},
-            } ]
+            } ],
         );
     }
 
-    # All the invariant plugins
-    $self->add_plugins(
-        # @Basic
-        'GatherDir',
-        'PruneCruft',
-        'ManifestSkip',
-        'MetaYAML',
-        'License',
-        'ExecDir',
-        'ShareDir',
-        'MakeMaker',
-        'Manifest',
+    if (_parse_bool($args{add_meta})) {
+        $self->add_plugins(
+            ['AutoMetaResources' => {
+                'homepage'          => 'http://search.cpan.org/dist/%{dist}',
+                'bugtracker.rt'     => 1,
+                'repository.github' => 'user:lespea',
+            }],
+        );
+    }
 
-        # Mods
+    #  Should we sign our package?
+    if (_parse_bool($args{sign})) {
+        $self->add_plugins(['Signature' => { sign => 'always' }]);
+    }
+
+    # Decide whether to test SYNOPSIS for syntax.
+    if (_parse_bool($args{compile_synopsis})) {
+        $self->add_plugins('SynopsisTests');
+    }
+}
+
+
+
+#  Add the "static" plugins
+sub _add_static {
+    my $self = shift;
+
+    $self->add_plugins(
+        ################################
+        ##        PRE-PROCESS         ##
+        ################################
+
+        #   Bring everything together so we can start processing everything
+        'GatherDir',
+
+        #   Set all our version strings
         'PkgVersion',
-        # TODO: Only add PodWeaver if weaver.ini exists
+
+        #   My authority
+        'Authority',
+
+        #   Generates all the pod documentation into its final form
         'PodWeaver',
 
-        # Generated Docs
+        #   Auto generate the next release info into the change file
+        ['NextRelease' => {
+            filename => 'CHANGES'
+        } ],
+
+
+
+        ################################
+        ##          PRE-REQS          ##
+        ################################
+
+        #   Guess the minimum version of perl required
+        'MinimumPerl',
+
+        #   Get all of the modules used
+        'AutoPrereqs',
+
+        #   Put all the dzil modules used into the meta data
+        'MetaConfig',
+
+
+
+        ################################
+        ##           TESTS            ##
+        ################################
+
+        #  Pretty much every test plugin available
+        'CheckChangesTests',
+        'CompileTests',
+        'ConsistentVersionTest',
+        'CriticTests',
+        'DistManifestTests',
+        'EOLTests',
+        'HasVersionTests',
+        'KwaliteeTests',
+        'MetaTests',
+        'MinimumVersionTests',
+        'NoTabsTests',
+        'PodCoverageTests',
+        'PodSyntaxTests',
+        'PortabilityTests',
+        'UnusedVarsTests',
+        'CPANChangesTests',
+
+        #   Move all the xt/*.t files into the normal test directory
+        'ExtraTests',
+
+
+
+        ################################
+        ##       FILE ARRANGING       ##
+        ################################
+
+        #   Remove junk that isn't needed in the package
+        'PruneCruft',
+        'ManifestSkip',
+
+        #   If there is a "bin" folder then install any scripts in there as programs
+        'ExecDir',
+
+        #   Install any thing that's in "share" into the global share dir
+        'ShareDir',
+
+        #   All the modules we're using (for test reporting)
+        'ReportVersions::Tiny',
+
+        #   Generate the builders that will install the module(s)
+        'ModuleBuild',
+        'MakeMaker',
+        'DualBuilders',
+
+
+
+        ################################
+        ##         META DATA          ##
+        ################################
+
+        #   Don't let cpan index the following dirs
+        ['MetaNoIndex' => {
+            directory => [qw/ inc t xt utils example examples /],
+        }],
+
+        #   Generate the meta data
+        'License',
         'InstallGuide',
+        'MetaJSON',
+        'MetaYAML',
+
+        #   Readme's
+        ['ReadmeAnyFromPod', 'html.build', {
+            filename => 'README.html',
+            type => 'html',
+        }],
         ['ReadmeAnyFromPod', 'text.build', {
             filename => 'README',
             type => 'text',
         }],
-        # This one gets copied out of the build dir by default, and
-        # does not become part of the dist.
+        # This one gets copied out of the build dir by default, and does not become part of the dist.
         ['ReadmeAnyFromPod', 'pod.root', {
             filename => 'README.pod',
             type => 'pod',
             location => 'root',
         }],
 
-        # Tests
-        'CriticTests',
-        'PodTests',
-        'HasVersionTests',
-        'PortabilityTests',
-        'UnusedVarsTests',
-        ['CompileTests' => {
-            # The test files don't seem to compile in the context of
-            # this test. But it's ok, because if they really have
-            # problems, they'll fail to compile when they run.
-            skip => 'Test$',
-        }],
-        'KwaliteeTests',
-        'ExtraTests',
+        #   Generates the manifest (needs to come last!)
+        'Manifest',
 
-        # Prerequisite checks
-        'ReportVersions',
-        'MinimumPerl',
-        'AutoPrereqs',
 
-        # Release checks
-        'CheckChangesHasContent',
-        'CheckPrereqsIndexed',
 
-        # Release
-        'NextRelease',
+        ################################
+        ##          RELEASE           ##
+        ################################
+
+        #   Make double sure we pass all the tests before we push
         'TestRelease',
+
+        #   In case the command was an accident, make sure we really want to release
         'ConfirmRelease',
     );
+};
 
-    # Choose version control. This must be after 'NextRelease' so that
-    # the Changes file is updated before committing.
-    given (lc $args{vcs}) {
-        when ('none') {
-            # No-op
-        }
-        when ('git') {
-            $self->add_plugins(
-                ['Git::Check' => {
-                    allow_dirty => [ 'dist.ini', 'README.pod', 'Changes' ],
-                } ],
-                [ 'Git::Commit' => {
-                    allow_dirty => [ 'dist.ini', 'README.pod', 'Changes' ],
-                } ],
-                'Git::Tag',
-                # This can't hurt. It's a no-op if github is not involved.
-                'GithubMeta',
-            );
-        }
-        default {
-            croak "Unknown vcs: $_\nTry setting vcs = 'none' and setting it up yourself.";
-        }
-    }
+
+
+#  Setup DZIL how I like it
+sub configure {
+    my $self = shift;
+
+    my $defaults = {
+        # By default release to cpan
+        release => 'real',
+
+        # Archive releases
+        archive => 1,
+        archive_directory => 'releases',
+
+        # Copy README.pod from build dir to dist dir, for Github and suchlike.
+        copy_file => [],
+        move_file => [],
+
+        # Munge the authority?
+        auth_munge => 1,
+
+        # Use perl-tidy
+        tidy => 0,
+
+        # Add CPAN meta-info (adds git stuff too)
+        add_meta => 1,
+
+        # Assume that synopsis is perl code and should compile cleanly.
+        compile_synopsis => 1,
+
+        # To sign or not to sign, that is the question
+        sign => 0,
+    };
+
+    my %args = (%$defaults, %{$self->payload});
+
+
+    #  Actually set everything up
+    _add_variable($self, %args);
+    _add_static($self);
+
+    return;
 }
 
-1; # Magic true value required at end of module
-__END__
+__PACKAGE__->meta->make_immutable;
+no Moose;
 
-=head1 SYNOPSIS
 
-In dist.ini:
+# Happy ending
+1;
 
-[@RTHOMPSON]
 
-=head1 DESCRIPTION
 
-This plugin bundle, in its default configuration, is equivalent to:
-
-[AutoVersion]
-major = 0
-[GatherDir]
-[PruneCruft]
-[ManifestSkip]
-[MetaYAML]
-[License]
-[ExecDir]
-[ShareDir]
-[MakeMaker]
-[Manifest]
-[PkgVersion]
-[PodWeaver]
-[InstallGuide]
-[ReadmeAnyFromPod / text.build ]
-filename = README
-type = text
-[ReadmeAnyFromPod / pod.root ]
-filename = README.pod
-type = pod
-location = root
-[CriticTests]
-[PodTests]
-[HasVersionTests]
-[PortabilityTests]
-[UnusedVarsTests]
-[CompileTests]
-skip = Test$
-[KwaliteeTests]
-[ExtraTests]
-[ReportVersions]
-[MinimumPerl]
-[AutoPrereqs]
-[CheckChangesHasContent]
-[NextRelease]
-[TestRelease]
-[ConfirmRelease]
-[UploadToCPAN]
-[ArchiveRelease]
-directory = releases
-[Git::Check]
-allow_dirty = dist.ini
-allow_dirty = README.pod
-allow_dirty = Changes
-[Git::Commit]
-allow_dirty = dist.ini
-allow_dirty = README.pod
-allow_dirty = Changes
-[Git::Tag]
-[GithubMeta]
-
-There are several options that can change the default configuation,
-though.
 
 =option -remove
 
@@ -396,10 +495,3 @@ want them.
 This option only has an effect if C<vcs> is 'git'.
 
 =for Pod::Coverage configure mvp_multivalue_args
-
-=head1 BUGS AND LIMITATIONS
-
-This module should be more configurable. Suggestions welcome.
-
-Please report any bugs or feature requests to
-C<rct+perlbug@thompsonclan.org>.
