@@ -1,4 +1,0 @@
-Revision history for {{$dist->name}}
-
-{{$NEXT}}
-    *   Initial version (heavily modified from RTHOMPSON & KENTNL's bundle)
