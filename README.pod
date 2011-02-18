@@ -59,7 +59,6 @@ This plugin bundle, in its default configuration, is equivalent to:
     [PruneCruft]
     [ReportVersions::Tiny]
     [ShareDir]
-    [Signature]
     [SynopsisTests]
     [TestRelease]
     [UnusedVarsTests]
@@ -78,24 +77,7 @@ Example:
 
 ; Remove these two plugins from the bundle
 -remove = CriticTests
--remove = GithubMeta
-
-=head2 version, version_major
-
-This option is used to specify the version of the module. The default
-is 'auto', which uses the AutoVersion plugin to choose a version
-number. You can also set the version number manually, or choose
-'disable' to prevent this bundle from supplying a version.
-
-Examples:
-
-; Use AutoVersion (default)
-version = auto
-version_major = 0
-; Use manual versioning
-version = 1.14.04
-; Provide no version, so that another plugin can handle it.
-version = disable
+-remove = SynopsisTests
 
 =head2 copy_file, move_file
 
@@ -113,27 +95,11 @@ If you want to include an auto-generated file in your distribution but
 you I<don't> want to include it in the build, use C<move_file> instead
 of C<copy_file>.
 
-The default is to move F<README.pod> out of the build dir. If you use
-C<move_file> in your configuration, this default will be disabled, so
-if you want it, make sure to include it along with your other
-C<move_file>s.
-
 Example:
 
 copy_file = README
 move_file = README.pod
 copy_file = README.txt
-
-=head2 synopsis_is_perl_code
-
-If this is set to true (the default), then the SynopsisTests plugin
-will be enabled. This plugin checks the perl syntax of the SYNOPSIS
-sections of your modules. Obviously, if your SYNOPSIS section is not
-perl code (case in point: this module), you should set this to false.
-
-Example:
-
-synopsis_is_perl_code = false
 
 =head2 release
 
@@ -173,29 +139,243 @@ archive_directory = releases
 ; Or don't archive
 archive = false
 
-=head2 vcs
+=head2 compile_synopsis
 
-This option specifies which version control system is being used for
-the distribution. Integration for that version control system is
-enabled. The default is 'git', and currently the only other option is
-'none', which does not load any version control plugins.
+If this is set to true (the default), then the SynopsisTests plugin
+will be enabled. This plugin checks the perl syntax of the SYNOPSIS
+sections of your modules. Obviously, if your SYNOPSIS section is not
+perl code (case in point: this module), you should set this to false.
 
-=head2 allow_dirty
+Example:
 
-This corresponds to the option of the same name in the Git::Check and
-Git::Commit plugins. Briefly, files listed in C<allow_dirty> are
-allowed to have changes that are not yet committed to git, and during
-the release process, they will be checked in (committed).
+compile_synopsis = false
 
-The default is F<dist.ini>, F<Changes>, and F<README.pod>. If you
-override the default, you must include these files manually if you
-want them.
+=head2 tidy_perl
 
-This option only has an effect if C<vcs> is 'git'.
+If this is set to true (not the default), then PerlTidy will clean up your code
+before it is sent out with your distribution
+
+Example:
+
+tidy_perl = false
+
+=head2 add_meta
+
+If this is set to true (the default), then the AutoMetaResources plugin
+will be enabled. This plugin adds various metatdata such as the github repo,
+cpan links, etc to the metadata of the plugin.
+
+Example:
+
+add_meta = false
 
 =encoding utf8
 
 =for Pod::Coverage configure mvp_multivalue_args
+
+=head1 SEE ALSO
+
+Please see those modules/websites for more information related to this module.
+
+=over 4
+
+=item *
+
+L<Dist::Zilla::Plugin::ArchiveRelease|Dist::Zilla::Plugin::ArchiveRelease>
+
+=item *
+
+L<Dist::Zilla::Plugin::Authority|Dist::Zilla::Plugin::Authority>
+
+=item *
+
+L<Dist::Zilla::Plugin::AutoMetaResources|Dist::Zilla::Plugin::AutoMetaResources>
+
+=item *
+
+L<Dist::Zilla::Plugin::AutoPrereqs|Dist::Zilla::Plugin::AutoPrereqs>
+
+=item *
+
+L<Dist::Zilla::Plugin::CPANChangesTests|Dist::Zilla::Plugin::CPANChangesTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::CheckChangesTests|Dist::Zilla::Plugin::CheckChangesTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::CompileTests|Dist::Zilla::Plugin::CompileTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::ConfirmRelease|Dist::Zilla::Plugin::ConfirmRelease>
+
+=item *
+
+L<Dist::Zilla::Plugin::ConsistentVersionTest|Dist::Zilla::Plugin::ConsistentVersionTest>
+
+=item *
+
+L<Dist::Zilla::Plugin::CopyFilesFromBuild|Dist::Zilla::Plugin::CopyFilesFromBuild>
+
+=item *
+
+L<Dist::Zilla::Plugin::CriticTests|Dist::Zilla::Plugin::CriticTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::DistManifestTests|Dist::Zilla::Plugin::DistManifestTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::DualBuilders|Dist::Zilla::Plugin::DualBuilders>
+
+=item *
+
+L<Dist::Zilla::Plugin::EOLTests|Dist::Zilla::Plugin::EOLTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::ExecDir|Dist::Zilla::Plugin::ExecDir>
+
+=item *
+
+L<Dist::Zilla::Plugin::ExtraTests|Dist::Zilla::Plugin::ExtraTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::FakeRelease|Dist::Zilla::Plugin::FakeRelease>
+
+=item *
+
+L<Dist::Zilla::Plugin::GatherDir|Dist::Zilla::Plugin::GatherDir>
+
+=item *
+
+L<Dist::Zilla::Plugin::HasVersionTests|Dist::Zilla::Plugin::HasVersionTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::InstallGuide|Dist::Zilla::Plugin::InstallGuide>
+
+=item *
+
+L<Dist::Zilla::Plugin::KwaliteeTests|Dist::Zilla::Plugin::KwaliteeTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::License|Dist::Zilla::Plugin::License>
+
+=item *
+
+L<Dist::Zilla::Plugin::MakeMaker|Dist::Zilla::Plugin::MakeMaker>
+
+=item *
+
+L<Dist::Zilla::Plugin::Manifest|Dist::Zilla::Plugin::Manifest>
+
+=item *
+
+L<Dist::Zilla::Plugin::ManifestSkip|Dist::Zilla::Plugin::ManifestSkip>
+
+=item *
+
+L<Dist::Zilla::Plugin::MetaConfig|Dist::Zilla::Plugin::MetaConfig>
+
+=item *
+
+L<Dist::Zilla::Plugin::MetaJSON|Dist::Zilla::Plugin::MetaJSON>
+
+=item *
+
+L<Dist::Zilla::Plugin::MetaNoIndex|Dist::Zilla::Plugin::MetaNoIndex>
+
+=item *
+
+L<Dist::Zilla::Plugin::MetaTests|Dist::Zilla::Plugin::MetaTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::MetaYAML|Dist::Zilla::Plugin::MetaYAML>
+
+=item *
+
+L<Dist::Zilla::Plugin::MinimumPerl|Dist::Zilla::Plugin::MinimumPerl>
+
+=item *
+
+L<Dist::Zilla::Plugin::MinimumVersionTests|Dist::Zilla::Plugin::MinimumVersionTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::ModuleBuild|Dist::Zilla::Plugin::ModuleBuild>
+
+=item *
+
+L<Dist::Zilla::Plugin::NextRelease|Dist::Zilla::Plugin::NextRelease>
+
+=item *
+
+L<Dist::Zilla::Plugin::NoTabsTests|Dist::Zilla::Plugin::NoTabsTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::PerlTidy|Dist::Zilla::Plugin::PerlTidy>
+
+=item *
+
+L<Dist::Zilla::Plugin::PkgVersion|Dist::Zilla::Plugin::PkgVersion>
+
+=item *
+
+L<Dist::Zilla::Plugin::PodCoverageTests|Dist::Zilla::Plugin::PodCoverageTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::PodSyntaxTests|Dist::Zilla::Plugin::PodSyntaxTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::PodWeaver|Dist::Zilla::Plugin::PodWeaver>
+
+=item *
+
+L<Dist::Zilla::Plugin::PortabilityTests|Dist::Zilla::Plugin::PortabilityTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::PruneCruft|Dist::Zilla::Plugin::PruneCruft>
+
+=item *
+
+L<Dist::Zilla::Plugin::ReportVersions::Tiny|Dist::Zilla::Plugin::ReportVersions::Tiny>
+
+=item *
+
+L<Dist::Zilla::Plugin::ShareDir|Dist::Zilla::Plugin::ShareDir>
+
+=item *
+
+L<Dist::Zilla::Plugin::SynopsisTests|Dist::Zilla::Plugin::SynopsisTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::TestRelease|Dist::Zilla::Plugin::TestRelease>
+
+=item *
+
+L<Dist::Zilla::Plugin::UnusedVarsTests|Dist::Zilla::Plugin::UnusedVarsTests>
+
+=item *
+
+L<Dist::Zilla::Plugin::UploadToCPAN|Dist::Zilla::Plugin::UploadToCPAN>
+
+=back
+
+=head1 INSTALLATION
+
+See perlmodinstall for information and options on installing Perl modules.
 
 =head1 AUTHOR
 
@@ -280,7 +460,7 @@ The code is open to the world, and available for you to hack on. Please feel fre
 with it, or whatever. If you want to contribute patches, please send me a diff or prod me to pull
 from your repository :)
 
-L<http://github.com/lespea/dist-zilla-pluginbundle-author-lespea>
+L<https://github.com/lespea/dist-zilla-pluginbundle-author-lespea>
 
   git clone git://github.com/lespea/dist-zilla-pluginbundle-author-lespea.git
 
