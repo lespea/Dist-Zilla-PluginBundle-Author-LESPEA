@@ -1,6 +1,5 @@
 use strict;
 use warnings;
-
 use utf8;
 
 package Dist::Zilla::PluginBundle::Author::LESPEA;
@@ -15,6 +14,8 @@ with 'Dist::Zilla::Role::PluginBundle::Easy';
 
 
 =encoding utf8
+
+=for Pod::Coverage configure mvp_multivalue_args
 
 =head1 SYNOPSIS
 
@@ -70,11 +71,61 @@ This plugin bundle, in its default configuration, is equivalent to:
     [PruneCruft]
     [ReportVersions::Tiny]
     [ShareDir]
-    [Signature]
     [SynopsisTests]
     [TestRelease]
     [UnusedVarsTests]
     [UploadToCPAN]
+
+=head1 SEE ALSO
+
+Dist::Zilla::Plugin::ArchiveRelease
+Dist::Zilla::Plugin::Authority
+Dist::Zilla::Plugin::AutoMetaResources
+Dist::Zilla::Plugin::AutoPrereqs
+Dist::Zilla::Plugin::CPANChangesTests
+Dist::Zilla::Plugin::CheckChangesTests
+Dist::Zilla::Plugin::CompileTests
+Dist::Zilla::Plugin::ConfirmRelease
+Dist::Zilla::Plugin::ConsistentVersionTest
+Dist::Zilla::Plugin::CopyFilesFromBuild
+Dist::Zilla::Plugin::CriticTests
+Dist::Zilla::Plugin::DistManifestTests
+Dist::Zilla::Plugin::DualBuilders
+Dist::Zilla::Plugin::EOLTests
+Dist::Zilla::Plugin::ExecDir
+Dist::Zilla::Plugin::ExtraTests
+Dist::Zilla::Plugin::FakeRelease
+Dist::Zilla::Plugin::GatherDir
+Dist::Zilla::Plugin::HasVersionTests
+Dist::Zilla::Plugin::InstallGuide
+Dist::Zilla::Plugin::KwaliteeTests
+Dist::Zilla::Plugin::License
+Dist::Zilla::Plugin::MakeMaker
+Dist::Zilla::Plugin::Manifest
+Dist::Zilla::Plugin::ManifestSkip
+Dist::Zilla::Plugin::MetaConfig
+Dist::Zilla::Plugin::MetaJSON
+Dist::Zilla::Plugin::MetaNoIndex
+Dist::Zilla::Plugin::MetaTests
+Dist::Zilla::Plugin::MetaYAML
+Dist::Zilla::Plugin::MinimumPerl
+Dist::Zilla::Plugin::MinimumVersionTests
+Dist::Zilla::Plugin::ModuleBuild
+Dist::Zilla::Plugin::NextRelease
+Dist::Zilla::Plugin::NoTabsTests
+Dist::Zilla::Plugin::PerlTidy
+Dist::Zilla::Plugin::PkgVersion
+Dist::Zilla::Plugin::PodCoverageTests
+Dist::Zilla::Plugin::PodSyntaxTests
+Dist::Zilla::Plugin::PodWeaver
+Dist::Zilla::Plugin::PortabilityTests
+Dist::Zilla::Plugin::PruneCruft
+Dist::Zilla::Plugin::ReportVersions::Tiny
+Dist::Zilla::Plugin::ShareDir
+Dist::Zilla::Plugin::SynopsisTests
+Dist::Zilla::Plugin::TestRelease
+Dist::Zilla::Plugin::UnusedVarsTests
+Dist::Zilla::Plugin::UploadToCPAN
 
 =cut
 
@@ -98,6 +149,156 @@ sub _parse_bool {
 
 
 
+=option -remove
+
+This option can be used to remove specific plugins from the bundle. It
+can be used multiple times.
+
+Obviously, the default is not to remove any plugins.
+
+Example:
+
+; Remove these two plugins from the bundle
+-remove = CriticTests
+-remove = SynopsisTests
+
+
+=option copy_file, move_file
+
+If you want to copy or move files out of the build dir and into the
+distribution dir, use these two options to specify those files. Both
+of these options can be specified multiple times.
+
+The most common reason to use this would be to put automatically
+generated files under version control. For example, Github likes to
+see a README file in your distribution, but if your README file is
+auto-generated during the build, you need to copy each newly-generated
+README file out of its build directory in order for Github to see it.
+
+If you want to include an auto-generated file in your distribution but
+you I<don't> want to include it in the build, use C<move_file> instead
+of C<copy_file>.
+
+Example:
+
+copy_file = README
+move_file = README.pod
+copy_file = README.txt
+
+
+=option release
+
+This option chooses the type of release to do. The default is 'real,'
+which means "really upload the release to CPAN" (i.e. load the
+C<UploadToCPAN> plugin). You can set it to 'fake,' in which case the
+C<FakeRelease> plugin will be loaded, which simulates the release
+process without actually doing anything. You can also set it to 'none'
+if you do not want this module to load any release plugin, in which
+case your F<dist.ini> file should load a release plugin directly. Any
+other value for this option will be interpreted as a release plugin
+name to be loaded.
+
+Examples:
+
+; Release to CPAN for real (default)
+release = real
+; For testing, you can do fake releases
+release = fake
+; Or you can choose no release plugin
+release = none
+; Or you can specify a specific release plugin.
+release = OtherReleasePlugin
+
+
+=option archive, archive_directory
+
+If set to true, the C<archive> option copies each released version of
+the module to an archive directory, using the C<ArchiveRelease>
+plugin. This is the default. The name of the archive directory is
+specified using C<archive_directory>, which is F<releases> by default.
+
+Examples:
+
+; archive each release to the "releases" directory
+archive = true
+archive_directory = releases
+; Or don't archive
+archive = false
+
+
+=option compile_synopsis
+
+If this is set to true (the default), then the SynopsisTests plugin
+will be enabled. This plugin checks the perl syntax of the SYNOPSIS
+sections of your modules. Obviously, if your SYNOPSIS section is not
+perl code (case in point: this module), you should set this to false.
+
+Example:
+
+compile_synopsis = false
+
+
+=option tidy_perl
+
+If this is set to true (not the default), then PerlTidy will clean up your code
+before it is sent out with your distribution
+
+Example:
+
+tidy_perl = false
+
+
+=option add_meta
+
+If this is set to true (the default), then the AutoMetaResources plugin
+will be enabled. This plugin adds various metatdata such as the github repo,
+cpan links, etc to the metadata of the plugin.
+
+Example:
+
+add_meta = false
+
+=cut
+
+
+#  Setup DZIL how I like it
+sub configure {
+    my $self = shift;
+
+    my $defaults = {
+        # By default release to cpan
+        release => 'real',
+
+        # Archive releases
+        archive => 1,
+        archive_directory => 'releases',
+
+        # Copy README.pod from build dir to dist dir, for Github and suchlike.
+        copy_file => [],
+        move_file => [],
+
+        # Use perl-tidy
+        tidy_perl => 0,
+
+        # Add CPAN meta-info (adds git stuff too)
+        add_meta => 1,
+
+        # Assume that synopsis is perl code and should compile cleanly.
+        compile_synopsis => 1,
+    };
+
+    my %args = (%$defaults, %{$self->payload});
+
+
+    #  Actually set everything up
+    _add_variable($self, %args);
+    _add_static($self);
+
+    return;
+}
+
+
+
 #  Add the "variable" plugins
 sub _add_variable {
     my ($self, %args) = @_;
@@ -117,7 +318,7 @@ sub _add_variable {
     );
 
     # Decide whether to test SYNOPSIS for syntax.
-    if (_parse_bool($args{tidy})) {
+    if (_parse_bool($args{tidy_perl})) {
         $self->add_plugins('PerlTidy');
     }
 
@@ -159,15 +360,12 @@ sub _add_variable {
         );
     }
 
-    #  Should we sign our package?
-    if (_parse_bool($args{sign})) {
-        $self->add_plugins(['Signature' => { sign => 'always' }]);
-    }
-
     # Decide whether to test SYNOPSIS for syntax.
     if (_parse_bool($args{compile_synopsis})) {
         $self->add_plugins('SynopsisTests');
     }
+
+    return;
 }
 
 
@@ -312,51 +510,11 @@ sub _add_static {
         #   In case the command was an accident, make sure we really want to release
         'ConfirmRelease',
     );
+
+    return;
 };
 
 
-
-#  Setup DZIL how I like it
-sub configure {
-    my $self = shift;
-
-    my $defaults = {
-        # By default release to cpan
-        release => 'real',
-
-        # Archive releases
-        archive => 1,
-        archive_directory => 'releases',
-
-        # Copy README.pod from build dir to dist dir, for Github and suchlike.
-        copy_file => [],
-        move_file => [],
-
-        # Munge the authority?
-        auth_munge => 1,
-
-        # Use perl-tidy
-        tidy => 0,
-
-        # Add CPAN meta-info (adds git stuff too)
-        add_meta => 1,
-
-        # Assume that synopsis is perl code and should compile cleanly.
-        compile_synopsis => 1,
-
-        # To sign or not to sign, that is the question
-        sign => 0,
-    };
-
-    my %args = (%$defaults, %{$self->payload});
-
-
-    #  Actually set everything up
-    _add_variable($self, %args);
-    _add_static($self);
-
-    return;
-}
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
@@ -364,134 +522,3 @@ no Moose;
 
 # Happy ending
 1;
-
-
-
-
-=option -remove
-
-This option can be used to remove specific plugins from the bundle. It
-can be used multiple times.
-
-Obviously, the default is not to remove any plugins.
-
-Example:
-
-; Remove these two plugins from the bundle
--remove = CriticTests
--remove = GithubMeta
-
-=option version, version_major
-
-This option is used to specify the version of the module. The default
-is 'auto', which uses the AutoVersion plugin to choose a version
-number. You can also set the version number manually, or choose
-'disable' to prevent this bundle from supplying a version.
-
-Examples:
-
-; Use AutoVersion (default)
-version = auto
-version_major = 0
-; Use manual versioning
-version = 1.14.04
-; Provide no version, so that another plugin can handle it.
-version = disable
-
-=option copy_file, move_file
-
-If you want to copy or move files out of the build dir and into the
-distribution dir, use these two options to specify those files. Both
-of these options can be specified multiple times.
-
-The most common reason to use this would be to put automatically
-generated files under version control. For example, Github likes to
-see a README file in your distribution, but if your README file is
-auto-generated during the build, you need to copy each newly-generated
-README file out of its build directory in order for Github to see it.
-
-If you want to include an auto-generated file in your distribution but
-you I<don't> want to include it in the build, use C<move_file> instead
-of C<copy_file>.
-
-The default is to move F<README.pod> out of the build dir. If you use
-C<move_file> in your configuration, this default will be disabled, so
-if you want it, make sure to include it along with your other
-C<move_file>s.
-
-Example:
-
-copy_file = README
-move_file = README.pod
-copy_file = README.txt
-
-=option synopsis_is_perl_code
-
-If this is set to true (the default), then the SynopsisTests plugin
-will be enabled. This plugin checks the perl syntax of the SYNOPSIS
-sections of your modules. Obviously, if your SYNOPSIS section is not
-perl code (case in point: this module), you should set this to false.
-
-Example:
-
-synopsis_is_perl_code = false
-
-=option release
-
-This option chooses the type of release to do. The default is 'real,'
-which means "really upload the release to CPAN" (i.e. load the
-C<UploadToCPAN> plugin). You can set it to 'fake,' in which case the
-C<FakeRelease> plugin will be loaded, which simulates the release
-process without actually doing anything. You can also set it to 'none'
-if you do not want this module to load any release plugin, in which
-case your F<dist.ini> file should load a release plugin directly. Any
-other value for this option will be interpreted as a release plugin
-name to be loaded.
-
-Examples:
-
-; Release to CPAN for real (default)
-release = real
-; For testing, you can do fake releases
-release = fake
-; Or you can choose no release plugin
-release = none
-; Or you can specify a specific release plugin.
-release = OtherReleasePlugin
-
-=option archive, archive_directory
-
-If set to true, the C<archive> option copies each released version of
-the module to an archive directory, using the C<ArchiveRelease>
-plugin. This is the default. The name of the archive directory is
-specified using C<archive_directory>, which is F<releases> by default.
-
-Examples:
-
-; archive each release to the "releases" directory
-archive = true
-archive_directory = releases
-; Or don't archive
-archive = false
-
-=option vcs
-
-This option specifies which version control system is being used for
-the distribution. Integration for that version control system is
-enabled. The default is 'git', and currently the only other option is
-'none', which does not load any version control plugins.
-
-=option allow_dirty
-
-This corresponds to the option of the same name in the Git::Check and
-Git::Commit plugins. Briefly, files listed in C<allow_dirty> are
-allowed to have changes that are not yet committed to git, and during
-the release process, they will be checked in (committed).
-
-The default is F<dist.ini>, F<Changes>, and F<README.pod>. If you
-override the default, you must include these files manually if you
-want them.
-
-This option only has an effect if C<vcs> is 'git'.
-
-=for Pod::Coverage configure mvp_multivalue_args

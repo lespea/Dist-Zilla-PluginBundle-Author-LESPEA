@@ -1,6 +1,5 @@
 use strict;
 use warnings;
-
 use utf8;
 
 package Dist::Zilla::MintingProfile::Author::LESPEA;
@@ -22,7 +21,7 @@ with 'Dist::Zilla::Role::MintingProfile::ShareDir';
 
 =head1 DESCRIPTION
 
-This installs a Dist::Zilla profile to start a new module with
+This installs a L<Dist::Zilla|Dist::Zilla> profile to start a new module with
 
 =cut
 
