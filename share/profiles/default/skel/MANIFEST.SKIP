@@ -60,12 +60,6 @@
 
 
 # Avoid Module::Build generated and utility files.
-\bBuild$
-\bBuild.bat$
-\b_build
-\bBuild.COM$
-\bBUILD.COM$
-\bbuild.com$
 Debian_CPANTS.txt
 \.tar\.gz$
 
