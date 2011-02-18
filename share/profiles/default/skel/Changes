@@ -1,6 +1,4 @@
-Release history for {{ $dist->name }}
+Revision history for {{$dist->name}}
 
-{{ '{{$NEXT}}' }}
-
-        First version, released on an unsuspecting world.
-
+{{$NEXT}}
+    *   Initial version

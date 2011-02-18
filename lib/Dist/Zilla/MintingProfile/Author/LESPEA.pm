@@ -13,6 +13,8 @@ with 'Dist::Zilla::Role::MintingProfile::ShareDir';
 
 =encoding utf8
 
+=for Pod::Coverage 
+
 =head1 SYNOPSIS
 
     #   On the command line run:
