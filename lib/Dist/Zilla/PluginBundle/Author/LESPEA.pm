@@ -140,12 +140,12 @@ sub mvp_multivalue_args { return qw( -remove copy_file move_file ) }
 #  Returns true for strings of 'true', 'yes', or positive numbers;
 #  false for for 'false', 'no', or 0; and dies otherwise
 sub _parse_bool {
-    my $val = shift // q{};
+    my $setting = shift // q{};
 
-    return 1 if $val =~ m{^(?:true|yes|1)$}xsmi;
-    return   if $val =~ m{^(?:false|no|0)$}xsmi;
+    return 1 if $setting =~ m{^(?:true|yes|1)$}xsmi;
+    return   if $setting =~ m{^(?:false|no|0)$}xsmi;
 
-    die "Invalid boolean value $val. Valid values are true/yes/1 or false/no/0";
+    die "Invalid boolean value $setting. Valid values are true/yes/1 or false/no/0";
 }
 
 
