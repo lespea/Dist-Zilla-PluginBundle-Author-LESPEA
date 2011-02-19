@@ -513,7 +513,7 @@ sub _add_static {
     );
 
     return;
-};
+}
 
 
 
