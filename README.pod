@@ -57,7 +57,7 @@ This plugin bundle, in its default configuration, is equivalent to:
     [PodWeaver]
     [PortabilityTests]
     [PruneCruft]
-    [ReportVersions::Tiny]
+    [ReportVersions]
     [ShareDir]
     [SynopsisTests]
     [TestRelease]
@@ -139,6 +139,15 @@ archive_directory = releases
 ; Or don't archive
 archive = false
 
+=head2 include_dotfiles
+
+If this is set to true (not the default), then any file that includes a leading
+'.' will be included in the package
+
+Example:
+
+include_dotfiles = true
+
 =head2 compile_synopsis
 
 If this is set to true (the default), then the SynopsisTests plugin
@@ -157,7 +166,7 @@ before it is sent out with your distribution
 
 Example:
 
-tidy_perl = false
+tidy_perl = true
 
 =head2 add_meta
 
@@ -349,7 +358,7 @@ L<Dist::Zilla::Plugin::PruneCruft|Dist::Zilla::Plugin::PruneCruft>
 
 =item *
 
-L<Dist::Zilla::Plugin::ReportVersions::Tiny|Dist::Zilla::Plugin::ReportVersions::Tiny>
+L<Dist::Zilla::Plugin::ReportVersions|Dist::Zilla::Plugin::ReportVersions>
 
 =item *
 
