@@ -170,9 +170,9 @@ tidy_perl = true
 
 =head2 add_meta
 
-If this is set to true (the default), then the AutoMetaResources plugin
-will be enabled. This plugin adds various metatdata such as the github repo,
-cpan links, etc to the metadata of the plugin.
+If this is set to true (the default), then the AutoMetaResources and Authority
+plugins will be enabled. These plugins adds various metatdata such as the github
+repo, cpan links, etc to the metadata of the plugin.
 
 Example:
 

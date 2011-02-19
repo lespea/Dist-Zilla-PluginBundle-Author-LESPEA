@@ -258,9 +258,9 @@ tidy_perl = true
 
 =option add_meta
 
-If this is set to true (the default), then the AutoMetaResources plugin
-will be enabled. This plugin adds various metatdata such as the github repo,
-cpan links, etc to the metadata of the plugin.
+If this is set to true (the default), then the AutoMetaResources and Authority
+plugins will be enabled. These plugins adds various metatdata such as the github
+repo, cpan links, etc to the metadata of the plugin.
 
 Example:
 
@@ -371,6 +371,7 @@ sub _add_variable {
                 'bugtracker.rt'     => 1,
                 'repository.github' => 'user:lespea',
             }],
+            'Authority'
         );
     }
 
@@ -394,9 +395,6 @@ sub _add_static {
         ################################
         #   Set all our version strings
         'PkgVersion',
-
-        #   My authority
-        'Authority',
 
         #   Generates all the pod documentation into its final form
         'PodWeaver',
