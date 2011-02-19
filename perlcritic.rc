@@ -1,8 +1,12 @@
 severity = 1
-include = Lax::ProhibitComplexMappings::LinesNotStatements Lax::ProhibitEmptyQuotes::ExceptAsFallback Lax::ProhibitLeadingZeros::ExceptChmod Lax::ProhibitStringyEval::ExceptForRequire Lax::RequireEndWithTrueConst Lax::RequireExplicitPackage::ExceptForPragmata Bangs::ProhibitNumberedNames Bangs::ProhibitRefProtoOrProto Bangs::ProhibitUselessRegexModifier Subroutines::ProhibitQualifiedSubDeclarations Documentation::RequirePODUseEncodingUTF8 CodeLayout::RequireUseUTF8
-color = 1
-verbose = 9
+color    = 1
+verbose  = 9
 
+theme = (bangs || bugs || complexity || core || cosmetic || danger || lax || maintenance || moose || pbp || performance || portability || pulp || readability || security || strictersubs || swift || tests || unicode) && (! (compatibility || deprecated || editor || more || nits || tics))
+ 
+
+[Bangs::ProhibitVagueNames]
+    names = bar bat data foo info item obj object temp tmp val var
 
 [BuiltinFunctions::ProhibitStringyEval]
 allow_includes = 1
@@ -10,15 +14,20 @@ allow_includes = 1
 [CodeLayout::ProhibitHardTabs]
 allow_leading_tabs = 0
 
+[Compatibility::PerlMinimumVersionAndWhy]
+    above_version = 5.008
+
+[Compatibility::PodMinimumVersion]
+    above_version = 5.008
+
+[Lax::RequireExplicitPackage::ExceptForPragmata]
+allowed_pragmata = diagnostics feature perlversion strict warnings utf8
+
 [RegularExpressions::RequireExtendedFormatting]
 minimum_regex_length_to_complain_about = 10
 
 [Subroutines::RequireArgUnpacking]
 short_subroutine_statements = 1
-
-[Lax::RequireExplicitPackage::ExceptForPragmata]
-allowed_pragmata = diagnostics feature perlversion strict warnings utf8
-
 
 
 [-Bangs::ProhibitCommentedOutCode]
@@ -26,6 +35,7 @@ allowed_pragmata = diagnostics feature perlversion strict warnings utf8
 [-ControlStructures::ProhibitPostfixControls]
 [-ControlStructures::ProhibitUnlessBlocks]
 [-ControlStructures::ProhibitUntilBlocks]
+[-Documentation::PodSpelling]
 [-Documentation::RequirePodSections]
 [-ErrorHandling::RequireCarping]
 [-Miscellanea::RequireRcsKeywords]
@@ -33,8 +43,4 @@ allowed_pragmata = diagnostics feature perlversion strict warnings utf8
 [-Modules::RequireExplicitPackage]
 [-References::ProhibitDoubleSigils]
 [-Subroutines::ProhibitCallsToUndeclaredSubs]
-[-Documentation::PodSpelling]
-[-ErrorHandling::RequireUseOfExceptions]
-[-Tics::ProhibitLongLines]
-[-Editor::RequireEmacsFileVariables]
 
