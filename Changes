@@ -1,4 +1,6 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.000000  2011-02-19 17:35:20 America/Chicago
     *   Initial version (heavily modified from RTHOMPSON & KENTNL's bundle)
