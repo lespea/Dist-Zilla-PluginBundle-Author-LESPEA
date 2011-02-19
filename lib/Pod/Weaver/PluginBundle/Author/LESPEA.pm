@@ -85,8 +85,11 @@ sub _exp {
 
 
 sub mvp_bundle_config {
+    my (undef, $params) = @_;
+    my $opts = $params->{payload};
+
     ## no critic 'ValuesAndExpressions::RequireInterpolationOfMetachars'
-    return (
+    my @setup = (
         [ '@Author::LESPEA/CorePrep'             , _exp('@CorePrep')             , {} ]                            ,
 
         [ '@Author::LESPEA/Name'                 , _exp('Name')                  , {} ]                            ,
@@ -106,21 +109,26 @@ sub mvp_bundle_config {
         [ 'FUNCTIONS'                            , _exp('Collect')               , { command => 'func' } ]         ,
 
         [ '@Author::LESPEA/Leftovers'            , _exp('Leftovers')             , {} ]                            ,
-
         [ '@Author::LESPEA/postlude'             , _exp('Region')                , { region_name => 'postlude' } ] ,
-
         [ '@Author::LESPEA/SeeAlso'              , _exp('SeeAlso')               , {} ]                            ,
-
         [ '@Author::LESPEA/Installation'         , _exp('Installation')          , {} ]                            ,
-
         [ '@Author::LESPEA/Authors'              , _exp('Authors')               , {} ]                            ,
-        [ '@Author::LESPEA/Support'              , _exp('Support')               , {} ]                            ,
-        [ '@Author::LESPEA/Legal'                , _exp('Legal')                 , {} ]                            ,
-
-        [ '@Author::LESPEA/WarrantyDisclaimer'   , _exp('WarrantyDisclaimer')    , {} ]                            ,
-
-        [ '@Author::LESPEA/-Transformer'         , _exp('-Transformer')          , { transformer => 'List' } ]     ,
     );
+
+
+    #  Don't include "support" if this isn't a cpan module
+    if ($opts->{is_cpan}) {
+        push @setup, [ '@Author::LESPEA/Support', _exp('Support'), {} ];
+    }
+
+
+    push @setup, (
+        [ '@Author::LESPEA/Legal'              , _exp('Legal')              , {} ]                        ,
+        [ '@Author::LESPEA/WarrantyDisclaimer' , _exp('WarrantyDisclaimer') , {} ]                        ,
+        [ '@Author::LESPEA/-Transformer'       , _exp('-Transformer')       , { transformer => 'List' } ] ,
+    );
+
+    return @setup;
 }
 
 
