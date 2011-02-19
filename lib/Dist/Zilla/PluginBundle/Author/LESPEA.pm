@@ -324,7 +324,7 @@ sub _add_variable {
     }
 
     #   Bring everything together so we can start processing everything
-    if ($self->include_dotfiles) {
+    if ($args{include_dotfiles}) {
         $self->add_plugins( ['GatherDir' => {include_dotfiles => 1}] );
     }
     else {
