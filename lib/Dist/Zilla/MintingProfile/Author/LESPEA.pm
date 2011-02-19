@@ -13,7 +13,7 @@ with 'Dist::Zilla::Role::MintingProfile::ShareDir';
 
 =encoding utf8
 
-=for Pod::Coverage 
+=for Pod::Coverage
 
 =head1 SYNOPSIS
 

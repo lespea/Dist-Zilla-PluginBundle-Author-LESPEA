@@ -291,7 +291,7 @@ sub configure {
 
 
     #  Actually set everything up
-    _add_variable($self, %args);
+    return if _add_variable($self, %args);
     _add_static($self);
 
     return;
@@ -306,7 +306,7 @@ sub _add_variable {
     # Use the @Filter bundle to handle '-remove'.
     if ($args{'-remove'}) {
         $self->add_bundle('@Filter' => { %args, -bundle => '@Author::LESPEA' });  ## no critic 'RequireInterpolationOfMetachars'
-        return;
+        return 1;
     }
 
     # Copy files from build dir
@@ -380,7 +380,8 @@ sub _add_static {
         ################################
 
         #   Bring everything together so we can start processing everything
-        'GatherDir',
+        #'GatherDir',
+        ['GatherDir' => { include_dotfiles => 1 }],
 
         #   Set all our version strings
         'PkgVersion',
@@ -446,6 +447,7 @@ sub _add_static {
 
         #   Remove junk that isn't needed in the package
         'PruneCruft',
+        #['PruneCruft' => { except => 'share/.*' }],
         'ManifestSkip',
 
         #   If there is a "bin" folder then install any scripts in there as programs
@@ -470,7 +472,7 @@ sub _add_static {
 
         #   Don't let cpan index the following dirs
         ['MetaNoIndex' => {
-            directory => [qw/ inc t xt utils example examples /],
+            directory => [qw/ inc t xt utils share example examples /],
         }],
 
         #   Generate the meta data
