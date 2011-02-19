@@ -246,7 +246,7 @@ before it is sent out with your distribution
 
 Example:
 
-tidy_perl = false
+tidy_perl = true
 
 
 =option add_meta
@@ -279,7 +279,7 @@ sub configure {
         move_file => [],
 
         # Use perl-tidy
-        tidy_perl => 0,
+        tidy_perl => 1,
 
         # Add CPAN meta-info (adds git stuff too)
         add_meta => 1,
