@@ -6,6 +6,7 @@ package Dist::Zilla::PluginBundle::Author::LESPEA;
 
 # ABSTRACT: LESPEA's Dist::Zilla Configuration
 
+use 5.010;
 use feature 'switch';
 
 use Moose;
@@ -69,7 +70,7 @@ This plugin bundle, in its default configuration, is equivalent to:
     [PodWeaver]
     [PortabilityTests]
     [PruneCruft]
-    [ReportVersions::Tiny]
+    [ReportVersions]
     [ShareDir]
     [SynopsisTests]
     [TestRelease]
@@ -120,7 +121,7 @@ Dist::Zilla::Plugin::PodSyntaxTests
 Dist::Zilla::Plugin::PodWeaver
 Dist::Zilla::Plugin::PortabilityTests
 Dist::Zilla::Plugin::PruneCruft
-Dist::Zilla::Plugin::ReportVersions::Tiny
+Dist::Zilla::Plugin::ReportVersions
 Dist::Zilla::Plugin::ShareDir
 Dist::Zilla::Plugin::SynopsisTests
 Dist::Zilla::Plugin::TestRelease
