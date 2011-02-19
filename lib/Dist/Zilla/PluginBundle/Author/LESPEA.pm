@@ -281,7 +281,7 @@ sub configure {
         release => 'real',
 
         # Include dotfiles in the package
-        include_dotfiles = 0,
+        include_dotfiles => 0,
 
         # Archive releases
         archive => 1,
