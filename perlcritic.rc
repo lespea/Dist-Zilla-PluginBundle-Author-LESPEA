@@ -3,7 +3,7 @@ color    = 1
 verbose  = 9
 
 theme = (bangs || bugs || complexity || core || cosmetic || danger || lax || maintenance || moose || pbp || performance || portability || pulp || readability || security || strictersubs || swift || tests || unicode) && (! (compatibility || deprecated || editor || more || nits || tics))
- 
+
 
 [Bangs::ProhibitVagueNames]
     names = bar bat data foo info item obj object temp tmp val var
@@ -43,4 +43,3 @@ short_subroutine_statements = 1
 [-Modules::RequireExplicitPackage]
 [-References::ProhibitDoubleSigils]
 [-Subroutines::ProhibitCallsToUndeclaredSubs]
-
