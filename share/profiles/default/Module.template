@@ -11,6 +11,10 @@ use 5.010;
 
 #  Import modules
 
+#  Common modules
+use autodie;
+use Data::Dumper;
+
 
 =encoding utf8
 
