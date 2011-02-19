@@ -6,6 +6,9 @@ package {{$name}};
 
 #ABSTRACT:  Main module for {{$name}}
 
+#  This is the 21st century
+use 5.010;
+
 #  Import modules
 
 
@@ -21,4 +24,6 @@ package {{$name}};
 
 =cut
 
+
+#  Happy ending
 1;
