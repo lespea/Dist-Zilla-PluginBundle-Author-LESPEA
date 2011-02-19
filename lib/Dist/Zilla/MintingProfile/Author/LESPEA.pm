@@ -6,6 +6,8 @@ package Dist::Zilla::MintingProfile::Author::LESPEA;
 
 # ABSTRACT: LESPEA's Minting Profile
 
+use 5.010;
+
 use Moose;
 use namespace::autoclean;
 with 'Dist::Zilla::Role::MintingProfile::ShareDir';

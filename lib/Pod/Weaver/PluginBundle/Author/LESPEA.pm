@@ -6,6 +6,8 @@ package Pod::Weaver::PluginBundle::Author::LESPEA;
 
 # ABSTRACT: A bundle that implements LESPEA's preferred Pod::Weaver config
 
+use 5.010;
+
 use namespace::autoclean;
 use Pod::Weaver::Config::Assembler;
 
