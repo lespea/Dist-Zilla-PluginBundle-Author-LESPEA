@@ -6,9 +6,6 @@ package Dist::Zilla::PluginBundle::Author::LESPEA;
 
 # ABSTRACT: LESPEA's Dist::Zilla Configuration
 
-use 5.010;
-use feature 'switch';
-
 use Moose;
 use Carp;
 with 'Dist::Zilla::Role::PluginBundle::Easy';
@@ -345,22 +342,17 @@ sub _add_variable {
     }
 
     # Choose release plugin
-    given ($args{release}) {
-        when (lc eq 'real') {
-            $self->add_plugins('UploadToCPAN')
-        }
-        when (lc eq 'fake') {
-            $self->add_plugins('FakeRelease')
-        }
-        when (lc eq 'none') {
-            # No release plugin
-        }
-        when ($_) {
-            $self->add_plugins("$_")
-        }
-        default {
-            # Empty string is the same as 'none'
-        }
+    if (lc $args{release} eq 'real') {
+        $self->add_plugins('UploadToCPAN');
+    }
+    elsif (lc $args{release} eq 'fake') {
+        $self->add_plugins('FakeRelease');
+    }
+    elsif (lc $args{release} eq 'none') {
+        # No release plugin
+    }
+    else {
+        $self->add_plugins("$_")
     }
 
     # Choose whether and where to archive releases
