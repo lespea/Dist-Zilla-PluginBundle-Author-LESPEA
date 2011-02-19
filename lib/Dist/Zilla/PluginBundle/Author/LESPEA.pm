@@ -394,9 +394,7 @@ sub _add_static {
         'PodWeaver',
 
         #   Auto generate the next release info into the change file
-        ['NextRelease' => {
-            filename => 'CHANGES'
-        } ],
+        'NextRelease',
 
 
 
@@ -458,7 +456,7 @@ sub _add_static {
         'ShareDir',
 
         #   All the modules we're using (for test reporting)
-        'ReportVersions::Tiny',
+        'ReportVersions',
 
         #   Generate the builders that will install the module(s)
         'ModuleBuild',
