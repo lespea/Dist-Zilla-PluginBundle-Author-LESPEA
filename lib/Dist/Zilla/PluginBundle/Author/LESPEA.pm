@@ -227,6 +227,16 @@ archive_directory = releases
 archive = false
 
 
+=option include_dotfiles
+
+If this is set to true (not the default), then any file that includes a leading
+'.' will be included in the package
+
+Example:
+
+include_dotfiles = true
+
+
 =option compile_synopsis
 
 If this is set to true (the default), then the SynopsisTests plugin
@@ -270,6 +280,9 @@ sub configure {
         # By default release to cpan
         release => 'real',
 
+        # Include dotfiles in the package
+        include_dotfiles = 0,
+
         # Archive releases
         archive => 1,
         archive_directory => 'releases',
@@ -308,6 +321,14 @@ sub _add_variable {
     if ($args{'-remove'}) {
         $self->add_bundle('@Filter' => { %args, -bundle => '@Author::LESPEA' });  ## no critic 'RequireInterpolationOfMetachars'
         return 1;
+    }
+
+    #   Bring everything together so we can start processing everything
+    if ($self->include_dotfiles) {
+        $self->add_plugins( ['GatherDir' => {include_dotfiles => 1}] );
+    }
+    else {
+        $self->add_plugins( 'GatherDir' );
     }
 
     # Copy files from build dir
@@ -379,11 +400,6 @@ sub _add_static {
         ################################
         ##        PRE-PROCESS         ##
         ################################
-
-        #   Bring everything together so we can start processing everything
-        #'GatherDir',
-        ['GatherDir' => { include_dotfiles => 1 }],
-
         #   Set all our version strings
         'PkgVersion',
 
