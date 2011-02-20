@@ -156,9 +156,9 @@ Obviously, the default is not to remove any plugins.
 
 Example:
 
-; Remove these two plugins from the bundle
--remove = CriticTests
--remove = SynopsisTests
+    ; Remove these two plugins from the bundle
+    -remove = CriticTests
+    -remove = SynopsisTests
 
 
 =option copy_file, move_file
@@ -179,9 +179,9 @@ of C<copy_file>.
 
 Example:
 
-copy_file = README
-move_file = README.pod
-copy_file = README.txt
+    copy_file = README
+    move_file = README.pod
+    copy_file = README.txt
 
 
 =option release
@@ -198,14 +198,14 @@ name to be loaded.
 
 Examples:
 
-; Release to CPAN for real (default)
-release = real
-; For testing, you can do fake releases
-release = fake
-; Or you can choose no release plugin
-release = none
-; Or you can specify a specific release plugin.
-release = OtherReleasePlugin
+    ; Release to CPAN for real (default)
+    release = real
+    ; For testing, you can do fake releases
+    release = fake
+    ; Or you can choose no release plugin
+    release = none
+    ; Or you can specify a specific release plugin.
+    release = OtherReleasePlugin
 
 
 =option archive, archive_directory
@@ -217,11 +217,11 @@ specified using C<archive_directory>, which is F<releases> by default.
 
 Examples:
 
-; archive each release to the "releases" directory
-archive = true
-archive_directory = releases
-; Or don't archive
-archive = false
+    ; archive each release to the "releases" directory
+    archive = true
+    archive_directory = releases
+    ; Or don't archive
+    archive = false
 
 
 =option include_dotfiles
@@ -231,7 +231,7 @@ If this is set to true (not the default), then any file that includes a leading
 
 Example:
 
-include_dotfiles = true
+    include_dotfiles = true
 
 
 =option compile_synopsis
@@ -243,7 +243,7 @@ perl code (case in point: this module), you should set this to false.
 
 Example:
 
-compile_synopsis = false
+    compile_synopsis = false
 
 
 =option tidy_perl
@@ -253,7 +253,7 @@ before it is sent out with your distribution
 
 Example:
 
-tidy_perl = true
+    tidy_perl = true
 
 
 =option add_meta
@@ -264,7 +264,7 @@ repo, cpan links, etc to the metadata of the plugin.
 
 Example:
 
-add_meta = false
+    add_meta = false
 
 =cut
 
