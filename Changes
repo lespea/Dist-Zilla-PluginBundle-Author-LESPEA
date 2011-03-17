@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.001000  2011-03-17 05:11:54 America/Chicago
     [Bugfix]
     *   Add more manual dependencies to try fix the cluster that is ActiveState
 
