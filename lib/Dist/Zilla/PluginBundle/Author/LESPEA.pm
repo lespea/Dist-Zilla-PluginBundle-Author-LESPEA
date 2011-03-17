@@ -59,14 +59,13 @@ This plugin bundle, in its default configuration, is equivalent to:
     [ModuleBuild]
     [NextRelease]
     [NoTabsTests]
-    [PerlTidy]
     [PkgVersion]
     [PodCoverageTests]
     [PodSyntaxTests]
     [PodWeaver]
     [PortabilityTests]
     [PruneCruft]
-    [ReportVersions]
+    [ReportVersions::Tiny]
     [ShareDir]
     [SynopsisTests]
     [TestRelease]
@@ -109,14 +108,13 @@ Dist::Zilla::Plugin::MinimumVersionTests
 Dist::Zilla::Plugin::ModuleBuild
 Dist::Zilla::Plugin::NextRelease
 Dist::Zilla::Plugin::NoTabsTests
-Dist::Zilla::Plugin::PerlTidy
 Dist::Zilla::Plugin::PkgVersion
 Dist::Zilla::Plugin::PodCoverageTests
 Dist::Zilla::Plugin::PodSyntaxTests
 Dist::Zilla::Plugin::PodWeaver
 Dist::Zilla::Plugin::PortabilityTests
 Dist::Zilla::Plugin::PruneCruft
-Dist::Zilla::Plugin::ReportVersions
+Dist::Zilla::Plugin::ReportVersions::Tiny
 Dist::Zilla::Plugin::ShareDir
 Dist::Zilla::Plugin::SynopsisTests
 Dist::Zilla::Plugin::TestRelease
@@ -244,16 +242,6 @@ Example:
     compile_synopsis = false
 
 
-=option tidy_perl
-
-If this is set to true (not the default), then PerlTidy will clean up your code
-before it is sent out with your distribution
-
-Example:
-
-    tidy_perl = true
-
-
 =option add_meta
 
 If this is set to true (the default), then the AutoMetaResources and Authority
@@ -285,9 +273,6 @@ sub configure {
         # Copy README.pod from build dir to dist dir, for Github and suchlike.
         copy_file => [],
         move_file => [],
-
-        # Use perl-tidy
-        tidy_perl => 1,
 
         # Add CPAN meta-info (adds git stuff too)
         add_meta => 1,
@@ -333,11 +318,6 @@ sub _add_variable {
             move => ($args{move_file} || [ q{} ]),
         } ]
     );
-
-    # Decide whether to test SYNOPSIS for syntax.
-    if (_parse_bool($args{tidy_perl})) {
-        $self->add_plugins('PerlTidy');
-    }
 
     # Choose release plugin
     if (lc $args{release} eq 'real') {
@@ -459,7 +439,7 @@ sub _add_static {
         'ShareDir',
 
         #   All the modules we're using (for test reporting)
-        'ReportVersions',
+        'ReportVersions::Tiny',
 
         #   Generate the builders that will install the module(s)
         'ModuleBuild',
