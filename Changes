@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.002000  2011-03-17 06:15:00 America/Chicago
     [Enhancement]
     *   Add SpellingCommonMistakesTests
 
