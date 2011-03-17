@@ -29,6 +29,10 @@ minimum_regex_length_to_complain_about = 10
 [Subroutines::RequireArgUnpacking]
 short_subroutine_statements = 1
 
+[InputOutput::RequireCheckedSyscalls]
+    functions = :builtins
+    exclude_functions = print printf
+
 
 [-Bangs::ProhibitCommentedOutCode]
 [-CodeLayout::RequireTidyCode]
