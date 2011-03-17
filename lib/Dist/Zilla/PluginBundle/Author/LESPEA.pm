@@ -30,7 +30,6 @@ This plugin bundle, in its default configuration, is equivalent to:
     [AutoMetaResources]
     [AutoPrereqs]
     [CPANChangesTests]
-    [CheckChangesTests]
     [CompileTests]
     [ConfirmRelease]
     [ConsistentVersionTest]
@@ -81,7 +80,6 @@ Dist::Zilla::Plugin::Authority
 Dist::Zilla::Plugin::AutoMetaResources
 Dist::Zilla::Plugin::AutoPrereqs
 Dist::Zilla::Plugin::CPANChangesTests
-Dist::Zilla::Plugin::CheckChangesTests
 Dist::Zilla::Plugin::CompileTests
 Dist::Zilla::Plugin::ConfirmRelease
 Dist::Zilla::Plugin::ConsistentVersionTest
@@ -424,7 +422,6 @@ sub _add_static {
         ################################
 
         #  Pretty much every test plugin available
-        'CheckChangesTests',
         'CompileTests',
         'ConsistentVersionTest',
         'CriticTests',
