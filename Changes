@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [Enhancement]
+    *   Add SpellingCommonMistakesTests
+
 
 1.001000  2011-03-17 05:11:54 America/Chicago
     [Bugfix]

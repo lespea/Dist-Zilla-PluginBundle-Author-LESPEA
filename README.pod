@@ -4,7 +4,7 @@ Dist::Zilla::PluginBundle::Author::LESPEA - LESPEA's Dist::Zilla Configuration
 
 =head1 VERSION
 
-version 1.001000
+version 1.002000
 
 =head1 SYNOPSIS
 
@@ -344,6 +344,10 @@ L<Dist::Zilla::Plugin::ReportVersions::Tiny|Dist::Zilla::Plugin::ReportVersions:
 =item *
 
 L<Dist::Zilla::Plugin::ShareDir|Dist::Zilla::Plugin::ShareDir>
+
+=item *
+
+L<Dist::Zilla::Plugin::SpellingCommonMistakesTests|Dist::Zilla::Plugin::SpellingCommonMistakesTests>
 
 =item *
 

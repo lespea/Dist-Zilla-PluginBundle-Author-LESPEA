@@ -116,6 +116,7 @@ Dist::Zilla::Plugin::PortabilityTests
 Dist::Zilla::Plugin::PruneCruft
 Dist::Zilla::Plugin::ReportVersions::Tiny
 Dist::Zilla::Plugin::ShareDir
+Dist::Zilla::Plugin::SpellingCommonMistakesTests
 Dist::Zilla::Plugin::SynopsisTests
 Dist::Zilla::Plugin::TestRelease
 Dist::Zilla::Plugin::UnusedVarsTests
@@ -417,6 +418,7 @@ sub _add_static {
         'PortabilityTests',
         'UnusedVarsTests',
         'CPANChangesTests',
+        'SpellingCommonMistakesTests',
 
         #   Move all the xt/*.t files into the normal test directory
         'ExtraTests',
