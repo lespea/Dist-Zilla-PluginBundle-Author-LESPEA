@@ -4,7 +4,7 @@ Dist::Zilla::PluginBundle::Author::LESPEA - LESPEA's Dist::Zilla Configuration
 
 =head1 VERSION
 
-version 1.000000
+version 1.001000
 
 =head1 SYNOPSIS
 
@@ -20,7 +20,6 @@ This plugin bundle, in its default configuration, is equivalent to:
     [AutoMetaResources]
     [AutoPrereqs]
     [CPANChangesTests]
-    [CheckChangesTests]
     [CompileTests]
     [ConfirmRelease]
     [ConsistentVersionTest]
@@ -50,14 +49,13 @@ This plugin bundle, in its default configuration, is equivalent to:
     [ModuleBuild]
     [NextRelease]
     [NoTabsTests]
-    [PerlTidy]
     [PkgVersion]
     [PodCoverageTests]
     [PodSyntaxTests]
     [PodWeaver]
     [PortabilityTests]
     [PruneCruft]
-    [ReportVersions]
+    [ReportVersions::Tiny]
     [ShareDir]
     [SynopsisTests]
     [TestRelease]
@@ -159,15 +157,6 @@ Example:
 
     compile_synopsis = false
 
-=head2 tidy_perl
-
-If this is set to true (not the default), then PerlTidy will clean up your code
-before it is sent out with your distribution
-
-Example:
-
-    tidy_perl = true
-
 =head2 add_meta
 
 If this is set to true (the default), then the AutoMetaResources and Authority
@@ -207,10 +196,6 @@ L<Dist::Zilla::Plugin::AutoPrereqs|Dist::Zilla::Plugin::AutoPrereqs>
 =item *
 
 L<Dist::Zilla::Plugin::CPANChangesTests|Dist::Zilla::Plugin::CPANChangesTests>
-
-=item *
-
-L<Dist::Zilla::Plugin::CheckChangesTests|Dist::Zilla::Plugin::CheckChangesTests>
 
 =item *
 
@@ -330,10 +315,6 @@ L<Dist::Zilla::Plugin::NoTabsTests|Dist::Zilla::Plugin::NoTabsTests>
 
 =item *
 
-L<Dist::Zilla::Plugin::PerlTidy|Dist::Zilla::Plugin::PerlTidy>
-
-=item *
-
 L<Dist::Zilla::Plugin::PkgVersion|Dist::Zilla::Plugin::PkgVersion>
 
 =item *
@@ -358,7 +339,7 @@ L<Dist::Zilla::Plugin::PruneCruft|Dist::Zilla::Plugin::PruneCruft>
 
 =item *
 
-L<Dist::Zilla::Plugin::ReportVersions|Dist::Zilla::Plugin::ReportVersions>
+L<Dist::Zilla::Plugin::ReportVersions::Tiny|Dist::Zilla::Plugin::ReportVersions::Tiny>
 
 =item *
 

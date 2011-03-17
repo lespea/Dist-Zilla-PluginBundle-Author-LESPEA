@@ -1,6 +1,15 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [Bugfix]
+    *   Add more manual dependencies to try fix the cluster that is ActiveState
+
+    [Enhancement]
+    *   Remove Perl::Tidy plugin (keep tidy config file in template though)
+    *   Switch to ReportVersions::Tiny
+    *   Remove CheckChanges since it breaks ReportVersions::Tiny
+
+    [Minor]
     *   All option examples should be code formatted to preserve formatting
 
 
