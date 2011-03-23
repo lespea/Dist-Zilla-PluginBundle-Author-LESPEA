@@ -457,6 +457,7 @@ sub _add_static {
         #   Don't let cpan index the following dirs
         ['MetaNoIndex' => {
             directory => [qw/ inc t xt utils share example examples /],
+            file      => [qw/ README.html /],
         }],
 
         #   Generate the meta data
