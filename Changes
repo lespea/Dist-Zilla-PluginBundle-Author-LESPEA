@@ -1,6 +1,12 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [Bugfix]
+    *   More manual dependency additions/rearranging to try and get ActiveState to work
+
+    [Enhancement]
+    *   Tell cpan not to index README.html
+
 
 1.002000  2011-03-17 06:15:00 America/Chicago
     [Enhancement]
