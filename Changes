@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.002001  2011-03-23 11:34:41 America/Chicago
     [Bugfix]
     *   More manual dependency additions/rearranging to try and get ActiveState to work
 
