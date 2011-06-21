@@ -29,7 +29,7 @@ This plugin bundle, in its default configuration, is equivalent to:
     [Authority]
     [AutoMetaResources]
     [AutoPrereqs]
-    [CPANChangesTests]
+    [Test::CPAN::Changes]
     [CompileTests]
     [ConfirmRelease]
     [ConsistentVersionTest]
@@ -78,7 +78,7 @@ Dist::Zilla::Plugin::ArchiveRelease
 Dist::Zilla::Plugin::Authority
 Dist::Zilla::Plugin::AutoMetaResources
 Dist::Zilla::Plugin::AutoPrereqs
-Dist::Zilla::Plugin::CPANChangesTests
+Dist::Zilla::Plugin::Test::CPAN::Changes
 Dist::Zilla::Plugin::CompileTests
 Dist::Zilla::Plugin::ConfirmRelease
 Dist::Zilla::Plugin::ConsistentVersionTest
@@ -417,7 +417,7 @@ sub _add_static {
         'PodSyntaxTests',
         'PortabilityTests',
         'UnusedVarsTests',
-        'CPANChangesTests',
+        'Test::CPAN::Changes',
         'SpellingCommonMistakesTests',
 
         #   Move all the xt/*.t files into the normal test directory
