@@ -1,6 +1,11 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [Enhancement]
+    *   Upgrade to the newest version of Perl::Critic::Bangs and remove deprecated modules
+    *   Switch from CPANChangesTests to Test::CPAN::Changes
+    *   Remove unnecessary dependencies -- doesn't build on ActiveState anyway since they have crazy short timeouts
+    *   Fix Perl::Critic errors
 
 1.002001  2011-03-23 11:34:41 America/Chicago
     [Bugfix]
