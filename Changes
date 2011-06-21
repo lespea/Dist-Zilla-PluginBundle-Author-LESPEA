@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.003000  2011-06-21 00:26:57 America/Chicago
     [Enhancement]
     *   Upgrade to the newest version of Perl::Critic::Bangs and remove deprecated modules
     *   Switch from CPANChangesTests to Test::CPAN::Changes
