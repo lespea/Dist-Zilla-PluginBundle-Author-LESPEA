@@ -317,7 +317,7 @@ sub _add_variable {
         [ 'CopyFilesFromBuild' => {
             copy => ($args{copy_file} || [ q{} ]),
             move => ($args{move_file} || [ q{} ]),
-        } ]
+        } ],
     );
 
     # Choose release plugin
@@ -350,7 +350,7 @@ sub _add_variable {
                 'bugtracker.rt'     => 1,
                 'repository.github' => 'user:lespea',
             }],
-            'Authority'
+            'Authority',
         );
     }
 
