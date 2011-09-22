@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.004000  2011-09-22 10:47:24 America/Chicago
     [Bugfix]
     *   Change varios test names as they have been deprecated
     *   Updated test dependencies to the versions that have the new names
