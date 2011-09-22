@@ -29,13 +29,9 @@ This plugin bundle, in its default configuration, is equivalent to:
     [Authority]
     [AutoMetaResources]
     [AutoPrereqs]
-    [Test::CPAN::Changes]
-    [CompileTests]
     [ConfirmRelease]
     [ConsistentVersionTest]
     [CopyFilesFromBuild]
-    [CriticTests]
-    [DistManifestTests]
     [DualBuilders]
     [EOLTests]
     [ExecDir]
@@ -44,18 +40,16 @@ This plugin bundle, in its default configuration, is equivalent to:
     [GatherDir]
     [HasVersionTests]
     [InstallGuide]
-    [KwaliteeTests]
     [License]
     [MakeMaker]
-    [Manifest]
     [ManifestSkip]
+    [Manifest]
     [MetaConfig]
     [MetaJSON]
     [MetaNoIndex]
     [MetaTests]
     [MetaYAML]
     [MinimumPerl]
-    [MinimumVersionTests]
     [ModuleBuild]
     [NextRelease]
     [NoTabsTests]
@@ -68,8 +62,14 @@ This plugin bundle, in its default configuration, is equivalent to:
     [ReportVersions::Tiny]
     [ShareDir]
     [SynopsisTests]
+    [Test::CPAN::Changes]
+    [Test::Compile]
+    [Test::DistManifest]
+    [Test::Kwalitee]
+    [Test::MinimumVersion]
+    [Test::Perl::Critic]
     [TestRelease]
-    [UnusedVarsTests]
+    [Tests::UnusedVars]
     [UploadToCPAN]
 
 =head1 SEE ALSO
@@ -78,13 +78,9 @@ Dist::Zilla::Plugin::ArchiveRelease
 Dist::Zilla::Plugin::Authority
 Dist::Zilla::Plugin::AutoMetaResources
 Dist::Zilla::Plugin::AutoPrereqs
-Dist::Zilla::Plugin::Test::CPAN::Changes
-Dist::Zilla::Plugin::CompileTests
 Dist::Zilla::Plugin::ConfirmRelease
 Dist::Zilla::Plugin::ConsistentVersionTest
 Dist::Zilla::Plugin::CopyFilesFromBuild
-Dist::Zilla::Plugin::CriticTests
-Dist::Zilla::Plugin::DistManifestTests
 Dist::Zilla::Plugin::DualBuilders
 Dist::Zilla::Plugin::EOLTests
 Dist::Zilla::Plugin::ExecDir
@@ -93,7 +89,6 @@ Dist::Zilla::Plugin::FakeRelease
 Dist::Zilla::Plugin::GatherDir
 Dist::Zilla::Plugin::HasVersionTests
 Dist::Zilla::Plugin::InstallGuide
-Dist::Zilla::Plugin::KwaliteeTests
 Dist::Zilla::Plugin::License
 Dist::Zilla::Plugin::MakeMaker
 Dist::Zilla::Plugin::Manifest
@@ -104,7 +99,6 @@ Dist::Zilla::Plugin::MetaNoIndex
 Dist::Zilla::Plugin::MetaTests
 Dist::Zilla::Plugin::MetaYAML
 Dist::Zilla::Plugin::MinimumPerl
-Dist::Zilla::Plugin::MinimumVersionTests
 Dist::Zilla::Plugin::ModuleBuild
 Dist::Zilla::Plugin::NextRelease
 Dist::Zilla::Plugin::NoTabsTests
@@ -112,14 +106,21 @@ Dist::Zilla::Plugin::PkgVersion
 Dist::Zilla::Plugin::PodCoverageTests
 Dist::Zilla::Plugin::PodSyntaxTests
 Dist::Zilla::Plugin::PodWeaver
-Dist::Zilla::Plugin::PortabilityTests
 Dist::Zilla::Plugin::PruneCruft
+Dist::Zilla::Plugin::ReadmeAnyFromPod
 Dist::Zilla::Plugin::ReportVersions::Tiny
 Dist::Zilla::Plugin::ShareDir
 Dist::Zilla::Plugin::SpellingCommonMistakesTests
-Dist::Zilla::Plugin::SynopsisTests
+Dist::Zilla::Plugin::Test::CPAN::Changes
+Dist::Zilla::Plugin::Test::Compile
+Dist::Zilla::Plugin::Test::DistManifest
+Dist::Zilla::Plugin::Test::Kwalitee
+Dist::Zilla::Plugin::Test::MinimumVersion
+Dist::Zilla::Plugin::Test::Perl::Critic
+Dist::Zilla::Plugin::Test::Portability
+Dist::Zilla::Plugin::Test::Synopsis
+Dist::Zilla::Plugin::Test::UnusedVars
 Dist::Zilla::Plugin::TestRelease
-Dist::Zilla::Plugin::UnusedVarsTests
 Dist::Zilla::Plugin::UploadToCPAN
 
 =cut
@@ -356,7 +357,7 @@ sub _add_variable {
 
     # Decide whether to test SYNOPSIS for syntax.
     if (_parse_bool($args{compile_synopsis})) {
-        $self->add_plugins('SynopsisTests');
+        $self->add_plugins('Test::Synopsis');
     }
 
     return;
@@ -403,20 +404,20 @@ sub _add_static {
         ################################
 
         #  Pretty much every test plugin available
-        'CompileTests',
+        'Test::Compile',
         'ConsistentVersionTest',
-        'CriticTests',
-        'DistManifestTests',
+        'Test::Perl::Critic',
+        'Test::DistManifest',
         'EOLTests',
         'HasVersionTests',
-        'KwaliteeTests',
+        'Test::Kwalitee',
         'MetaTests',
-        'MinimumVersionTests',
+        'Test::MinimumVersion',
         'NoTabsTests',
         'PodCoverageTests',
         'PodSyntaxTests',
-        'PortabilityTests',
-        'UnusedVarsTests',
+        'Test::Portability',
+        'Test::UnusedVars',
         'Test::CPAN::Changes',
         'SpellingCommonMistakesTests',
 

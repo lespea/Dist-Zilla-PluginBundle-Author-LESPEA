@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [Bugfix]
+    *   Change varios test names as they have been deprecated
+    *   Updated test dependencies to the versions that have the new names
 
 1.003000  2011-06-21 00:26:57 America/Chicago
     [Enhancement]
