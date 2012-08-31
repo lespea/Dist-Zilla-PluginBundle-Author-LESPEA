@@ -42,7 +42,6 @@ short_subroutine_statements = 1
 [-Documentation::PodSpelling]
 [-Documentation::RequirePodSections]
 [-ErrorHandling::RequireCarping]
-[-Miscellanea::RequireRcsKeywords]
 [-Modules::RequireExplicitInclusion]
 [-Modules::RequireExplicitPackage]
 [-References::ProhibitDoubleSigils]

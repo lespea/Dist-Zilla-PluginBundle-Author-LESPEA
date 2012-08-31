@@ -65,11 +65,9 @@ This plugin bundle, in its default configuration, is equivalent to:
     [Test::CPAN::Changes]
     [Test::Compile]
     [Test::DistManifest]
-    [Test::Kwalitee]
     [Test::MinimumVersion]
     [Test::Perl::Critic]
     [TestRelease]
-    [Tests::UnusedVars]
     [UploadToCPAN]
 
 =head1 SEE ALSO
@@ -114,12 +112,10 @@ Dist::Zilla::Plugin::SpellingCommonMistakesTests
 Dist::Zilla::Plugin::Test::CPAN::Changes
 Dist::Zilla::Plugin::Test::Compile
 Dist::Zilla::Plugin::Test::DistManifest
-Dist::Zilla::Plugin::Test::Kwalitee
 Dist::Zilla::Plugin::Test::MinimumVersion
 Dist::Zilla::Plugin::Test::Perl::Critic
 Dist::Zilla::Plugin::Test::Portability
 Dist::Zilla::Plugin::Test::Synopsis
-Dist::Zilla::Plugin::Test::UnusedVars
 Dist::Zilla::Plugin::TestRelease
 Dist::Zilla::Plugin::UploadToCPAN
 
@@ -410,14 +406,14 @@ sub _add_static {
         'Test::DistManifest',
         'EOLTests',
         'HasVersionTests',
-        'Test::Kwalitee',
+        #'Test::Kwalitee',
         'MetaTests',
         'Test::MinimumVersion',
         'NoTabsTests',
         'PodCoverageTests',
         'PodSyntaxTests',
         'Test::Portability',
-        'Test::UnusedVars',
+        #'Test::UnusedVars',
         'Test::CPAN::Changes',
         'SpellingCommonMistakesTests',
 

@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [Enhancement]
+    *   Remove Kwalitee & unusedvars since they're very buggy
+    *   Removed 'Miscellanea::RequireRcsKeywords' from shared perlcritic.rc since it's removed in:
+    *   Require version 1.118 of Perl::Critic
 
 1.004000  2011-09-22 10:47:24 America/Chicago
     [Bugfix]
