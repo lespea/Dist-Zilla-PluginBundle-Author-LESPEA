@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.005000  2012-08-31 15:55:48 America/Chicago
     [Enhancement]
     *   Remove Kwalitee & unusedvars since they're very buggy
     *   Removed 'Miscellanea::RequireRcsKeywords' from shared perlcritic.rc since it's removed in:
