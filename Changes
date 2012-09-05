@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.005001  2012-09-05 01:05:27 America/Chicago
     [Bugfix]
     *   EOL tests are horribly broken in windows
 
