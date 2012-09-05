@@ -6,7 +6,7 @@ Dist::Zilla::PluginBundle::Author::LESPEA - LESPEA's Dist::Zilla Configuration
 
 =head1 VERSION
 
-version 1.005000
+version 1.005001
 
 =head1 SYNOPSIS
 
@@ -25,7 +25,6 @@ This plugin bundle, in its default configuration, is equivalent to:
     [ConsistentVersionTest]
     [CopyFilesFromBuild]
     [DualBuilders]
-    [EOLTests]
     [ExecDir]
     [ExtraTests]
     [FakeRelease]
@@ -211,10 +210,6 @@ L<Dist::Zilla::Plugin::DualBuilders|Dist::Zilla::Plugin::DualBuilders>
 
 =item *
 
-L<Dist::Zilla::Plugin::EOLTests|Dist::Zilla::Plugin::EOLTests>
-
-=item *
-
 L<Dist::Zilla::Plugin::ExecDir|Dist::Zilla::Plugin::ExecDir>
 
 =item *
@@ -284,10 +279,6 @@ L<Dist::Zilla::Plugin::ModuleBuild|Dist::Zilla::Plugin::ModuleBuild>
 =item *
 
 L<Dist::Zilla::Plugin::NextRelease|Dist::Zilla::Plugin::NextRelease>
-
-=item *
-
-L<Dist::Zilla::Plugin::NoTabsTests|Dist::Zilla::Plugin::NoTabsTests>
 
 =item *
 

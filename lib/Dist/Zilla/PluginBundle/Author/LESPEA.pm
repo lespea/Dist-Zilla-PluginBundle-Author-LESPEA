@@ -33,7 +33,6 @@ This plugin bundle, in its default configuration, is equivalent to:
     [ConsistentVersionTest]
     [CopyFilesFromBuild]
     [DualBuilders]
-    [EOLTests]
     [ExecDir]
     [ExtraTests]
     [FakeRelease]
@@ -80,7 +79,6 @@ Dist::Zilla::Plugin::ConfirmRelease
 Dist::Zilla::Plugin::ConsistentVersionTest
 Dist::Zilla::Plugin::CopyFilesFromBuild
 Dist::Zilla::Plugin::DualBuilders
-Dist::Zilla::Plugin::EOLTests
 Dist::Zilla::Plugin::ExecDir
 Dist::Zilla::Plugin::ExtraTests
 Dist::Zilla::Plugin::FakeRelease
@@ -99,7 +97,6 @@ Dist::Zilla::Plugin::MetaYAML
 Dist::Zilla::Plugin::MinimumPerl
 Dist::Zilla::Plugin::ModuleBuild
 Dist::Zilla::Plugin::NextRelease
-Dist::Zilla::Plugin::NoTabsTests
 Dist::Zilla::Plugin::PkgVersion
 Dist::Zilla::Plugin::PodCoverageTests
 Dist::Zilla::Plugin::PodSyntaxTests
@@ -404,7 +401,7 @@ sub _add_static {
         'ConsistentVersionTest',
         'Test::Perl::Critic',
         'Test::DistManifest',
-        'EOLTests',
+        #'EOLTests',
         'HasVersionTests',
         #'Test::Kwalitee',
         'MetaTests',
