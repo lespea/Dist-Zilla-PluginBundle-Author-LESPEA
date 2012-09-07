@@ -6,7 +6,7 @@ Dist::Zilla::PluginBundle::Author::LESPEA - LESPEA's Dist::Zilla Configuration
 
 =head1 VERSION
 
-version 1.005001
+version 1.006000
 
 =head1 SYNOPSIS
 

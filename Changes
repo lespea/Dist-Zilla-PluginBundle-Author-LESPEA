@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [Enhancement]
+    *   Pod weaver bundle now collects constants via the 'const' keyword
 
 1.005001  2012-09-05 01:05:27 America/Chicago
     [Bugfix]

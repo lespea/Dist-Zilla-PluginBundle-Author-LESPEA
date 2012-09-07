@@ -41,6 +41,9 @@ It is nearly equivalent to the following:
     [Collect / OPTIONS]
     command = option
 
+    [Collect / CONSTANTS]
+    command = const
+
     [Collect / ATTRIBUTES]
     command = attr
 
@@ -104,6 +107,7 @@ sub mvp_bundle_config {
         [ 'EXPORTS'                              , _exp('Generic')               , {} ]                            ,
 
         [ 'OPTIONS'                              , _exp('Collect')               , { command => 'option' } ]       ,
+        [ 'CONSTANTS'                            , _exp('Collect')               , { command => 'const'  } ]       ,
         [ 'ATTRIBUTES'                           , _exp('Collect')               , { command => 'attr' } ]         ,
         [ 'METHODS'                              , _exp('Collect')               , { command => 'method' } ]       ,
         [ 'FUNCTIONS'                            , _exp('Collect')               , { command => 'func' } ]         ,
