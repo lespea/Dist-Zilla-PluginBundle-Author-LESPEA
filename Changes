@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [Enhancement]
+    *  Improve the skeleton gitignore file
 
 1.006000  2012-09-07 07:38:46 America/Chicago
     [Enhancement]
