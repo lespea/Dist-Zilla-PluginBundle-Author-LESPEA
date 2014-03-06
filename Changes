@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.007000  2014-03-06 14:43:21-06:00 America/Chicago
     [Enhancement]
     *  Improve the skeleton gitignore file
 
