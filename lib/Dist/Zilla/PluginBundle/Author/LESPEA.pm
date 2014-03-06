@@ -266,8 +266,8 @@ sub configure {
         archive_directory => 'releases',
 
         # Copy README.pod from build dir to dist dir, for Github and suchlike.
-        copy_file => [],
-        move_file => [],
+        #copy_file => [ ],
+        #move_file => [ ],
 
         # Add CPAN meta-info (adds git stuff too)
         add_meta => 1,

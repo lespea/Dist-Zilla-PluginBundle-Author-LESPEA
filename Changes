@@ -4,6 +4,9 @@ Revision history for {{$dist->name}}
     [Enhancement]
     *  Improve the skeleton gitignore file
 
+    [Bugfix]
+    *   We can no longer have a "default" key that is an empty array as Config::MVP croaks on it
+
 1.006000  2012-09-07 07:38:46 America/Chicago
     [Enhancement]
     *   Pod weaver bundle now collects constants via the 'const' keyword
