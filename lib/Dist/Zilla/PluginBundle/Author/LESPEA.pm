@@ -307,11 +307,12 @@ sub _add_variable {
     }
 
     # Copy files from build dir
+    my %copy_args;
+    $copy_args{copy} = $args{copy_file}  if  defined $args{copy_file};
+    $copy_args{move} = $args{move_file}  if  defined $args{move_file};
+
     $self->add_plugins(
-        [ 'CopyFilesFromBuild' => {
-            copy => ($args{copy_file} || [ q{} ]),
-            move => ($args{move_file} || [ q{} ]),
-        } ],
+        [ 'CopyFilesFromBuild' => \%copy_args],
     );
 
     # Choose release plugin
