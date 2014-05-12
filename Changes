@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.008000  2014-05-12 18:08:02-05:00 America/Chicago
     [Enhancement]
     *  Re-enable Kwalitee
     *  Update eol & tabs deps
