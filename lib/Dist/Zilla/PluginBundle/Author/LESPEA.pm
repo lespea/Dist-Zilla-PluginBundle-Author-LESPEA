@@ -64,7 +64,10 @@ This plugin bundle, in its default configuration, is equivalent to:
     [Test::CPAN::Changes]
     [Test::Compile]
     [Test::DistManifest]
+    [Test::EOL]
+    [Test::Kwalitee]
     [Test::MinimumVersion]
+    [Test::NoTabs]
     [Test::Perl::Critic]
     [TestRelease]
     [UploadToCPAN]
@@ -109,7 +112,10 @@ Dist::Zilla::Plugin::SpellingCommonMistakesTests
 Dist::Zilla::Plugin::Test::CPAN::Changes
 Dist::Zilla::Plugin::Test::Compile
 Dist::Zilla::Plugin::Test::DistManifest
+Dist::Zilla::Plugin::Test::EOL
+Dist::Zilla::Plugin::Test::Kwalitee
 Dist::Zilla::Plugin::Test::MinimumVersion
+Dist::Zilla::Plugin::Test::NoTabs
 Dist::Zilla::Plugin::Test::Perl::Critic
 Dist::Zilla::Plugin::Test::Portability
 Dist::Zilla::Plugin::Test::Synopsis
@@ -402,12 +408,12 @@ sub _add_static {
         'ConsistentVersionTest',
         'Test::Perl::Critic',
         'Test::DistManifest',
-        #'EOLTests',
         'HasVersionTests',
-        #'Test::Kwalitee',
+        'Test::Kwalitee',
         'MetaTests',
         'Test::MinimumVersion',
-        'NoTabsTests',
+        'Test::NoTabs',
+        'Test::EOL',
         'PodCoverageTests',
         'PodSyntaxTests',
         'Test::Portability',
